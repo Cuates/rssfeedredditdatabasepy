@@ -8,11 +8,8 @@ drop procedure if exists insertupdatedeleteNewsFeed;
 delimiter //
 create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
   begin
-    -- Omit characters
-    set optionMode = regexp_replace(optionMode, '[^a-zA-Z]', '');
-
-    -- -- Multi space to single space
-    -- optionMode := regexp_replace(optionMode, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set optionMode = trim(regexp_replace(regexp_replace(optionMode, '[^a-zA-Z]', ' '), '[ ]{2,}', ' '));
 
     -- Check if empty string
     if optionMode = '' then
@@ -23,11 +20,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
     -- Set character limit
     set optionMode = substring(optionMode, 1, 255);
 
-    -- Omit characters
-    set title = regexp_replace(title, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
-
-    -- Multi space to single space
-    set title = regexp_replace(title, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set title = trim(regexp_replace(regexp_replace(title, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' '), '[ ]{2,}', ' '));
 
     -- Check if empty string
     if title = '' then
@@ -38,11 +32,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
     -- Set character limit
     set title = substring(title, 1, 255);
 
-    -- Omit characters
-    set imageurl = regexp_replace(imageurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
-
-    -- Multi space to single space
-    set imageurl = regexp_replace(imageurl, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set imageurl = trim(regexp_replace(regexp_replace(imageurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' '), '[ ]{2,}', ' '));
 
     -- Check if empty string
     if imageurl = '' then
@@ -53,11 +44,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
     -- Set character limit
     set imageurl = substring(imageurl, 1, 255);
 
-    -- Omit characters
-    set feedurl = regexp_replace(feedurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
-
-    -- Multi space to single space
-    set feedurl = regexp_replace(feedurl, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set feedurl = trim(regexp_replace(regexp_replace(feedurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' '), '[ ]{2,}', ' '));
 
     -- Check if empty string
     if feedurl = '' then
@@ -68,11 +56,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
     -- -- Set character limit
     -- set feedurl = substring(feedurl, 1, 255);
 
-    -- Omit characters
-    set actualurl = regexp_replace(actualurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
-
-    -- Multi space to single space
-    set actualurl = regexp_replace(actualurl, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set actualurl = trim(regexp_replace(regexp_replace(actualurl, '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' '), '[ ]{2,}', ' '));
 
     -- Check if empty string
     if actualurl = '' then
@@ -83,11 +68,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
     -- Set character limit
     set actualurl = substring(actualurl, 1, 255);
 
-    -- Omit characters
-    set publishDate = regexp_replace(publishDate, '[^0-9\-: ]', ' ');
-
-    -- Multi space to single space
-    set publishDate = regexp_replace(publishDate, '[ ]{2,}', ' ');
+    -- Omit characters, multi space to single space, and trim leading and trailing spaces
+    set publishDate = trim(regexp_replace(regexp_replace(publishDate, '[^0-9\-: ]', ' '), '[ ]{2,}', ' '));
 
     -- Check if the parameter cannot be casted into a date time
     if str_to_date(publishDate, '%Y-%m-%d %H:%i:%S') is null then
