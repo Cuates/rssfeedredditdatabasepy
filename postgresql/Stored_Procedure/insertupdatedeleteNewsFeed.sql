@@ -11,6 +11,9 @@ as $$
     -- Omit characters
     optionMode := regexp_replace(optionMode, '[^a-zA-Z]', '');
 
+    -- -- Multi space to single space
+    -- optionMode := regexp_replace(optionMode, '[ ]{2,}', ' ');
+
     -- Check if empty string
     if optionMode = '' then
       -- Set parameter to null if empty string
@@ -22,6 +25,8 @@ as $$
 
     -- Omit characters
     title := regexp_replace(title, '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
+
+    -- Multi space to single space
     title := regexp_replace(title, '[ ]{2,}', ' ');
 
     -- Check if empty string
@@ -35,6 +40,8 @@ as $$
 
     -- Omit characters
     imageurl := regexp_replace(imageurl, '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
+
+    -- Multi space to single space
     imageurl := regexp_replace(imageurl, '[ ]{2,}', ' ');
 
     -- Check if empty string
@@ -48,6 +55,8 @@ as $$
 
     -- Omit characters
     feedurl := regexp_replace(feedurl, '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
+
+    -- Multi space to single space
     feedurl := regexp_replace(feedurl, '[ ]{2,}', ' ');
 
     -- Check if empty string
@@ -61,6 +70,8 @@ as $$
 
     -- Omit characters
     actualurl := regexp_replace(actualurl, '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]', ' ');
+
+    -- Multi space to single space
     actualurl := regexp_replace(actualurl, '[ ]{2,}', ' ');
 
     -- Check if empty string
@@ -74,6 +85,8 @@ as $$
 
     -- Omit characters
     publishDate := regexp_replace(publishDate, '[^0-9\-: ]', ' ');
+
+    -- Multi space to single space
     publishDate := regexp_replace(publishDate, '[ ]{2,}', ' ');
 
     -- Check if the parameter cannot be casted into a date time
