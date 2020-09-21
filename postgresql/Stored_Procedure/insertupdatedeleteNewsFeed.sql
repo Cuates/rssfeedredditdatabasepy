@@ -115,7 +115,7 @@ as $$
 
     -- Check if option mode is insert temp news
     elseif optionMode = 'insertTempNews' then
-      -- Check if parameters are null
+      -- Check if parameters are not null
       if title is not null and publishDate is not null then
           -- Insert record
           insert into NewsFeedTemp(title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp);
