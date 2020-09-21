@@ -6,7 +6,7 @@ drop procedure if exists insertupdatedeleteNewsFeed;
 
 -- Procedure Create
 delimiter //
-create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text, inout status text)
+create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
   begin
     -- Omit characters
     set optionMode = regexp_replace(optionMode, '[^a-zA-Z]', '');
@@ -111,7 +111,7 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
 
       -- Select message
       select
-      'Success~Record(s) deleted' into status;
+      'Success~Record(s) deleted' as `status`;
 
     -- Check if option mode is insert temp news
     elseif optionMode = 'insertTempNews' then
@@ -122,11 +122,11 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
 
         -- Select message
         select
-        'Success~Record(s) inserted' into status;
+        'Success~Record(s) inserted' as `status`;
       else
         -- Select message
         select
-        'Error~Process halted, title and or publish date were not provided' into status;
+        'Error~Process halted, title and or publish date were not provided' as `status`;
       end if;
 
     -- Else check if option mode is update bulk news
@@ -153,7 +153,7 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
 
       -- Select message
       select
-      'Success~Record(s) updated' into status;
+      'Success~Record(s) updated' as `status`;
 
     -- Else check if option mode is insert bulk news
     elseif optionMode = 'insertBulkNews' then
@@ -198,7 +198,7 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
 
       -- Select message
       select
-      'Success~Record(s) inserted' into status;
+      'Success~Record(s) inserted' as `status`;
     end if;
   end
 // delimiter ;
