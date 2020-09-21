@@ -5,7 +5,7 @@
 drop procedure if exists insertupdatedeleteNewsFeed;
 
 -- Procedure Create
-create procedure insertupdatedeleteNewsFeed (in optionMode text, in title text default null, in imageurl text default null, in feedurl text default null, in actualurl text default null, in publishDate text default null, inout status text default null)
+create procedure insertupdatedeleteNewsFeed(in optionMode text, in title text default null, in imageurl text default null, in feedurl text default null, in actualurl text default null, in publishDate text default null, inout status text default null)
 as $$
   begin
     -- Omit characters
