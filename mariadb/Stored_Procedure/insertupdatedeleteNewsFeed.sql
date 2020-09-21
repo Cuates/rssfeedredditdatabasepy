@@ -146,8 +146,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
         nft.publish_date is not null
       ) and
       (
-        nft.publish_date >= date_add(current_timestamp(), interval -1 hour) and
-        nft.publish_date <= date_add(current_timestamp(), interval 0 hour)
+        cast(nft.publish_date as datetime) >= date_add(current_timestamp(), interval -1 hour) and
+        cast(nft.publish_date as datetime) <= date_add(current_timestamp(), interval 0 hour)
       ) and
       nf.title is not null;
 
@@ -191,8 +191,8 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
         nft.publish_date is not null
       ) and
       -- (
-        -- nft.publish_date >= date_add(current_timestamp(), interval -1 hour) and
-        -- nft.publish_date <= date_add(current_timestamp(), interval 0 hour)
+        -- cast(nft.publish_date as datetime) >= date_add(current_timestamp(), interval -1 hour) and
+        -- cast(nft.publish_date as datetime) <= date_add(current_timestamp(), interval 0 hour)
       -- ) and
       nf.title is null;
 
