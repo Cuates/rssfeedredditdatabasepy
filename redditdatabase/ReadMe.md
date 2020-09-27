@@ -10,4 +10,4 @@
 
 ### Execution
 * Python Script
-  * `python3.8 rssfeedrarbgdatabase.py`
+  * `python3.8 rssfeedredditdatabase.py`
