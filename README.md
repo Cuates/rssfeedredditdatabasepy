@@ -25,13 +25,19 @@
 * PostgreSQL
   * `pip3.8 install psycopg2-binary`
     * [Psycopg2 Binary](https://pypi.org/project/psycopg2/)
-* feedparser
-  * `pip3.8 install feedparser`
-    * [Feed Parser](https://pypi.org/project/feedparser/)
-* pytz
+* Requests
+  * `pip3.8 install requests`
+    * [Request](https://pypi.org/project/requests/)
+* URLLib3
+  * `pip3.8 install urllib3`
+    * [URLLib3](https://pypi.org/project/urllib3/)
+* HTML3
+  * `pip3.8 install html3`
+    * [Html3](https://pypi.org/project/html3/)
+* PYTZ
   * `pip3.8 install pytz`
     * [PYTZ](https://pypi.org/project/pytz/)
-* tzlocal
+* TZLocal
   * `pip3.8 install tzlocal`
     * [TZLocal](https://pypi.org/project/tzlocal/)
 * SQLAlchemy
