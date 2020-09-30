@@ -4,7 +4,7 @@ use <databasename>;
 -- ===========================================
 --        File: insertupdatedeleteNewsFeed
 --     Created: 09/07/2020
---     Updated: 09/27/2020
+--     Updated: 09/29/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete News Feed
@@ -157,11 +157,11 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
           nft.title is not null and
           nft.feedurl is not null and
           nft.publish_date is not null
-        ) -- and
-        -- (
-        --   cast(nft.publish_date as datetime) >= date_add(current_timestamp(), interval -1 hour) and
-        --   cast(nft.publish_date as datetime) <= date_add(current_timestamp(), interval 0 hour)
-        -- )
+        ) and
+        (
+          cast(nft.publish_date as datetime) >= date_add(current_timestamp(), interval -1 hour) and
+          cast(nft.publish_date as datetime) <= date_add(current_timestamp(), interval 0 hour)
+        )
         group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date, nf.title, nf.nfID, nf.title
       ),
       filteredNewsDetails as
@@ -204,7 +204,7 @@ create procedure `insertupdatedeleteNewsFeed`(in optionMode text, in title text,
 
       -- Update records
       update NewsFeed nf
-      join NewsFeedTempTable nftt on nftt.nfttID = nf.nfID
+      inner join NewsFeedTempTable nftt on nftt.nfttID = nf.nfID
       set
       nf.imageurl = if(trim(nftt.imageurl) = '', null, trim(nftt.imageurl)),
       nf.feedurl = nftt.feedurl,
