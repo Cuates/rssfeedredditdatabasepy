@@ -1,21 +1,30 @@
-USE [Media]
-GO
+-- Database Connect
+use [Media]
+go
 
-SET ANSI_NULLS ON
-GO
+-- Set ansi nulls
+set ansi_nulls on
+go
 
-SET QUOTED_IDENTIFIER ON
-GO
+-- Set quoted identifier
+set quoted_identifier on
+go
 
-CREATE TABLE [dbo].[NewsFeedTemp](
-	[title] [nvarchar](max) NULL,
-	[imageurl] [nvarchar](max) NULL,
-	[feedurl] [nvarchar](max) NULL,
-	[actualurl] [nvarchar](max) NULL,
-	[publish_date] [nvarchar](max) NULL,
-	[created_date] [datetime2](7) NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
+-- Table Drop
+drop table if exists dbo.NewsFeedTemp
+go
 
-ALTER TABLE [dbo].[NewsFeedTemp] ADD  DEFAULT (getdate()) FOR [created_date]
-GO
+-- Table Create
+create table [dbo].[NewsFeedTemp](
+	[title] [nvarchar](max) null,
+	[imageurl] [nvarchar](max) null,
+	[feedurl] [nvarchar](max) null,
+	[actualurl] [nvarchar](max) null,
+	[publish_date] [nvarchar](max) null,
+	[created_date] [datetime2](6) null
+) on [PRIMARY]
+go
+
+-- Contraint Default
+alter table [dbo].[NewsFeedTemp] add  default (getdate()) for [created_date]
+go

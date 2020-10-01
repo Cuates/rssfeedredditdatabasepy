@@ -1,30 +1,39 @@
-USE [Media]
-GO
+-- Database Connect
+use [Media]
+go
 
-SET ANSI_NULLS ON
-GO
+-- Set ansi nulls
+set ansi_nulls on
+go
 
-SET QUOTED_IDENTIFIER ON
-GO
+-- Set quoted identifier
+set quoted_identifier on
+go
 
-CREATE TABLE [dbo].[NewsFeed](
-	[nfID] [bigint] IDENTITY(1,1) NOT NULL,
-	[title] [nvarchar](255) NOT NULL,
-	[imageurl] [nvarchar](255) NULL,
-	[feedurl] [nvarchar](max) NULL,
-	[actualurl] [nvarchar](255) NULL,
-	[publish_date] [datetime2](7) NOT NULL,
-	[created_date] [datetime2](7) NOT NULL,
-	[modified_date] [datetime2](7) NULL,
- CONSTRAINT [PK_NewsFeed_title] PRIMARY KEY CLUSTERED 
+-- Table Drop
+drop table if exists dbo.NewsFeed
+
+-- Table Create
+create table [dbo].[NewsFeed](
+	[nfID] [bigint] identity(1,1) not null,
+	[title] [nvarchar](255) not null,
+	[imageurl] [nvarchar](255) null,
+	[feedurl] [nvarchar](768) not null,
+	[actualurl] [nvarchar](255) null,
+	[publish_date] [datetime2](6) not null,
+	[created_date] [datetime2](6) not null,
+	[modified_date] [datetime2](6) null,
+ constraint [PK_NewsFeed_title] primary key clustered
 (
-	[title] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
+	[title] asc
+)with (pad_index = off, statistics_norecompute = off, ignore_dup_key = off, allow_row_locks = on, allow_page_locks = on, fillfactor = 90, optimize_for_sequential_key = off) on [primary]
+) on [primary]
+go
 
-ALTER TABLE [dbo].[NewsFeed] ADD  DEFAULT (getdate()) FOR [created_date]
-GO
+-- Contraint Default
+alter table [dbo].[NewsFeed] add  default (getdate()) for [created_date]
+go
 
-ALTER TABLE [dbo].[NewsFeed] ADD  DEFAULT (getdate()) FOR [modified_date]
-GO
+-- Contraint Default
+alter table [dbo].[NewsFeed] add  default (getdate()) for [modified_date]
+go
