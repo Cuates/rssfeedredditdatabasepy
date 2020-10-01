@@ -1,5 +1,5 @@
 -- Database Connect
-use [Media]
+use [databasename]
 go
 
 -- Set ansi nulls
@@ -16,12 +16,12 @@ go
 
 -- Table Create
 create table [dbo].[NewsFeedTemp](
-	[title] [nvarchar](max) null,
-	[imageurl] [nvarchar](max) null,
-	[feedurl] [nvarchar](max) null,
-	[actualurl] [nvarchar](max) null,
-	[publish_date] [nvarchar](max) null,
-	[created_date] [datetime2](6) null
+  [title] [nvarchar](max) null,
+  [imageurl] [nvarchar](max) null,
+  [feedurl] [nvarchar](max) null,
+  [actualurl] [nvarchar](max) null,
+  [publish_date] [nvarchar](max) null,
+  [created_date] [datetime2](6) null
 ) on [PRIMARY]
 go
 
