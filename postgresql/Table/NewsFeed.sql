@@ -4,7 +4,7 @@
 -- =======================
 --        File: NewsFeed
 --     Created: 09/07/2020
---     Updated: 09/27/2020
+--     Updated: 10/05/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: News Feed
@@ -19,10 +19,10 @@ create sequence NewsFeed_nfID_seq;
 -- Table Create
 create table if not exists NewsFeed(
   nfID bigint not null default nextval('NewsFeed_nfID_seq'),
-  title varchar(255) not null,
-  imageurl varchar(255) default null,
-  feedurl varchar(768) not null,
-  actualurl varchar(255) default null,
+  title citext not null,
+  imageurl citext default null,
+  feedurl citext not null,
+  actualurl citext default null,
   publish_date timestamp not null,
   created_date timestamp not null default current_timestamp,
   modified_date timestamp default current_timestamp,
