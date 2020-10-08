@@ -16,10 +16,10 @@ drop table if exists dbo.NewsFeed
 -- Table Create
 create table [dbo].[NewsFeed](
   [nfID] [bigint] identity(1,1) not null,
-  [title] [nvarchar](255) not null,
-  [imageurl] [nvarchar](255) null,
-  [feedurl] [nvarchar](768) not null,
-  [actualurl] [nvarchar](255) null,
+  [title] [text] not null,
+  [imageurl] [text] null,
+  [feedurl] [text] not null,
+  [actualurl] [text] null,
   [publish_date] [datetime2](6) not null,
   [created_date] [datetime2](6) not null,
   [modified_date] [datetime2](6) null,
