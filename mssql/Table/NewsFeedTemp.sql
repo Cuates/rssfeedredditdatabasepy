@@ -16,11 +16,11 @@ go
 
 -- Table Create
 create table [dbo].[NewsFeedTemp](
-  [title] [nvarchar](max) null,
-  [imageurl] [nvarchar](max) null,
-  [feedurl] [nvarchar](max) null,
-  [actualurl] [nvarchar](max) null,
-  [publish_date] [nvarchar](max) null,
+  [title] [text] null,
+  [imageurl] [text] null,
+  [feedurl] [text] null,
+  [actualurl] [text] null,
+  [publish_date] [text] null,
   [created_date] [datetime2](6) null
 ) on [PRIMARY]
 go
