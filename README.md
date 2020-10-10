@@ -8,7 +8,7 @@
 * [Dependent MSSQL Function](#dependent-mssql-function)
 
 ### Version
-* 0.0.1
+* 0.0.2
 
 ### **Important Note**
 * This script was written with Python 3 methods
