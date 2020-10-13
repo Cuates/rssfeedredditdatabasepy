@@ -11,7 +11,7 @@
 
 ### **Important Note**
 * This project was written with MariaDB 10.5.6 methods
-* Configured utf8mb4 charset
+* Configure utf8mb4 charset
 
 ### Prerequisite Data Types
 * bigint
