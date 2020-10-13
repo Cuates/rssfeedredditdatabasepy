@@ -20,7 +20,6 @@
 * int
 * nvarchar
 * datetime2
-* bit
 
 ### Prerequisite Functions
 * substring
@@ -42,11 +41,7 @@
 * not in
 
 ### Stored Procedure Usage
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'deleteTempMovie'`
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'deleteTempTV'`
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'insertTempMovie'`, @titleLong = 'titleLongValue', @titleShort = 'titleShortValue', @publishDate = '2020-10-13 00:00:00'
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'insertTempTV'`, @titleLong = 'titleLongValue', @titleShort = 'titleShortValue', @publishDate = '2020-10-13 00:00:00'
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'updateBulkMovie'`
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'updateBulkTV'`
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'insertBulkMovie'`
-* `dbo.insertupdatedeleteMediaFeed @optionMode = 'insertBulkTV'`
+* `dbo.insertupdatedeleteNewsFeed @optionMode = 'deleteTempNews'`
+* `dbo.insertupdatedeleteNewsFeed @optionMode = 'insertTempNews'`, @title = 'titleValue', @imageurl = 'imageUrlValue', @feedurl = 'feedUrlValue', @actualurl = 'actualUrlValue', @publishDate = '2020-10-13 00:00:00'
+* `dbo.insertupdatedeleteNewsFeed @optionMode = 'updateBulkNews'`
+* `dbo.insertupdatedeleteNewsFeed @optionMode = 'insertBulkNews'`
