@@ -95,15 +95,15 @@ class RssFeedRedditDatabaseClass:
         messageResponse = ''
 
         # MariaDB query statement
-        if regEx.match(r'MariaDBSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        if regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # PostgreSQL query statement
-        elif regEx.match(r'PGSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # MSSQL query statement
-        elif regEx.match(r'MSSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call param01 = 'param01'")
 
@@ -162,17 +162,17 @@ class RssFeedRedditDatabaseClass:
         messageResponse = ''
 
         # MariaDB query statement
-        if regEx.match(r'MariaDBSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        if regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01', :Param01);")
         # PostgreSQL query statement
-        elif regEx.match(r'PGSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01', :Param01);")
         # MSSQL query statement
-        elif regEx.match(r'MSSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
-          query = sqlalchemy.text("stored procedure call param01 = 'param01')
+          query = sqlalchemy.text("stored procedure call param01 = :param01")
 
         # Check if query is empty
         if query != '':
@@ -230,15 +230,15 @@ class RssFeedRedditDatabaseClass:
         messageResponse = ''
 
         # MariaDB query statement
-        if regEx.match(r'MariaDBSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        if regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # PostgreSQL query statement
-        elif regEx.match(r'PGSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # MSSQL query statement
-        elif regEx.match(r'MSSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call param01 = 'param01'")
 
@@ -297,15 +297,15 @@ class RssFeedRedditDatabaseClass:
         messageResponse = ''
 
         # MariaDB query statement
-        if regEx.match(r'MariaDBSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        if regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # PostgreSQL query statement
-        elif regEx.match(r'PGSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call ('param01');")
         # MSSQL query statement
-        elif regEx.match(r'MSSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+        elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
           # Convert statement to text
           query = sqlalchemy.text("stored procedure call param01 = 'param01'")
 
@@ -505,7 +505,7 @@ class RssFeedRedditDatabaseClass:
       self.connection = None
 
       # Check if database type is MySQL or the alternative MariaDB
-      if regEx.match(r'MariaDBSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+      if regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
         # # Set variable with string
         # print('mysql:host=' + self.Server + ';port=' + self.Port + ';dbname=' + self.Database, self.User, self.Pass)
 
@@ -529,7 +529,7 @@ class RssFeedRedditDatabaseClass:
           # self.connection.close()
 
       # Else check if database type is PGSQL
-      elif regEx.match(r'PGSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+      elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
         # # Check else if database type is PostgreSQL
         # print('pgsql:host=' + self.Server + '; port=' + self.Port + '; dbname=' + self.Database + '; user=' + self.User + '; password=' + self.Pass + ';')
 
@@ -553,7 +553,7 @@ class RssFeedRedditDatabaseClass:
           # self.connection.close()
 
       # Else check if database type is MSSQL
-      elif regEx.match(r'MSSQL[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
+      elif regEx.match(r'OptionInConfig[a-zA-Z]{0,}', type, flags=regEx.IGNORECASE):
         # # Check if database type is Microsoft
         # print('odbc:Driver=' + self.Driver + '; Servername=' + self.Server + '; Port=' + self.Port + '; Database=' + self.Database + '; UID=' + self.User + '; PWD=' + self.Pass + ';')
 

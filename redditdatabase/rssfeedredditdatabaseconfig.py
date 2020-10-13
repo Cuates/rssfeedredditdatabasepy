@@ -311,7 +311,7 @@ class RssFeedRedditDatabaseConfig:
         self._pathParent = '/path/to/log/file'
         self._pathLevelOne = '/log'
         self._pathLevelTwo = ''
-        self._filenameMedia = '/rssredditdatabasepy.log'
+        self._filenameMedia = '/logfile.log'
         self._pathDB = ''
         self._database = ''
         self._username = ''

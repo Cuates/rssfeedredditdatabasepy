@@ -112,7 +112,7 @@ def main():
               rssFeedPublishDateLocalTimeStamp = datetime.datetime.fromtimestamp(float(rssFeedPublishDateUTCTimeStamp), local_tz).strftime("%Y-%m-%d %H:%M:%S")
 
             # Set dictionary list with values
-            feedStorage.append({'Title': rssFeedTitle, 'ImageURL': rssFeedImageUrl, 'FeedURL': rssFeedUrl, 'ActualURL': rssFeedPermaUrl, 'PublishDate': rssFeedPublishDateLocalTimeStamp})
+            feedStorage.append({'Param01': rssFeedTitle, 'Param02': rssFeedImageUrl, 'Param03': rssFeedUrl, 'Param04': rssFeedPermaUrl, 'Param05': rssFeedPublishDateLocalTimeStamp})
 
         # Check if there are any values to process
         if feedStorage:
