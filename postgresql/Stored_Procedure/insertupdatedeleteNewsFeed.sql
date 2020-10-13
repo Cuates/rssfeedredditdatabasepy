@@ -4,7 +4,7 @@
 -- ===========================================
 --        File: insertupdatedeleteNewsFeed
 --     Created: 09/07/2020
---     Updated: 10/10/2020
+--     Updated: 10/13/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete News Feed
@@ -185,10 +185,10 @@ as $$
       (
         -- Select unique records
         select
-        snd.nfttitle as title,
+        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
         max(snd.nftpublishdate) as publishdate
         from subNewsDetails snd
-        group by snd.nfttitle
+        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
       ),
       newsDetails as
       (
@@ -277,10 +277,10 @@ as $$
       (
         -- Select unique records
         select
-        snd.nfttitle as title,
+        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
         max(snd.nftpublishdate) as publishdate
         from subNewsDetails snd
-        group by snd.nfttitle
+        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
       ),
       newsDetails as
       (
