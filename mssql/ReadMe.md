@@ -7,7 +7,7 @@
 * [Prerequisite Data Types](#prerequisite-data-types)
 * [Prerequisite Functions](#prerequisite-functions)
 * [Prerequisite Conditions](#prerequisite-conditions)
-* [Usage](#usage)
+* [Stored Procedure Usage](#stored-procedure-usage)
 
 ### **Important Note**
 * This project was written with SQL Server 2019 methods
