@@ -17,7 +17,6 @@
 
 ### Prerequisite Data Types
 * bigint
-* int
 * nvarchar
 * datetime2
 
@@ -28,17 +27,14 @@
 * error_number
 * error_line
 * error_message
-* lower
-* iif
-* datepart
+* trim
 * cast
 * dateadd
-* trim
 * max
-* concat
+* iif
 
 ### Prerequisite Conditions
-* not in
+* N/A
 
 ### Stored Procedure Usage
 * `dbo.insertupdatedeleteNewsFeed @optionMode = 'deleteTempNews'`
