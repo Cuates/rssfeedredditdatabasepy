@@ -20,12 +20,12 @@
 * text
 
 ### Prerequisite Functions
+* trim
 * regexp_replace
 * substring
 * nullif
 * str_to_date
 * current_timestamp
-* trim
 * cast
 * date_add
 * max
