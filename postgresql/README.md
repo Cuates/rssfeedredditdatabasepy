@@ -15,7 +15,7 @@
 ### Prerequisite Data Types
 * bigint
 * int
-* nvarchar
+* varchar
 * datetime2
 * bit
 * text
