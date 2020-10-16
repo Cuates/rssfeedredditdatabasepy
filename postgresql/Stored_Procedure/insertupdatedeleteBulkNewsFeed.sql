@@ -4,7 +4,7 @@
 -- ================================================
 --        File: insertupdatedeleteBulkNewsFeed
 --     Created: 09/07/2020
---     Updated: 10/14/2020
+--     Updated: 10/16/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete Bulk News Feed
@@ -23,15 +23,21 @@ as $$
   declare omitFeedurl varchar(255) := '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
   declare omitActualurl varchar(255) := '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
   declare omitPublishDate varchar(255) := '[^0-9\-: ]';
+  declare maxLengthOptionMode int := 255;
+  declare maxLengthTitle int := 255;
+  declare maxLengthImageurl int := 255;
+  declare maxLengthFeedurl int := 768;
+  declare maxLengthActualurl int := 255;
+  declare maxLengthPublishDate int := 255;
 
   begin
     -- Check if parameter is not null
     if optionMode is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      optionMode := regexp_replace(regexp_replace(optionMode, omitOptionMode, ' '), '[ ]{2,}', ' ');
+      optionMode := regexp_replace(regexp_replace(optionMode, omitOptionMode, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      optionMode := trim(substring(optionMode, 1, 255));
+      optionMode := trim(substring(optionMode, 1, maxLengthOptionMode));
 
       -- Check if empty string
       if optionMode = '' then
@@ -43,10 +49,10 @@ as $$
     -- Check if parameter is not null
     if title is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      title := regexp_replace(regexp_replace(title, omitTitle, ' '), '[ ]{2,}', ' ');
+      title := regexp_replace(regexp_replace(title, omitTitle, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      title := trim(substring(title, 1, 255));
+      title := trim(substring(title, 1, maxLengthTitle));
 
       -- Check if empty string
       if title = '' then
@@ -58,10 +64,10 @@ as $$
     -- Check if parameter is not null
     if imageurl is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      imageurl := regexp_replace(regexp_replace(imageurl, omitImageurl, ' '), '[ ]{2,}', ' ');
+      imageurl := regexp_replace(regexp_replace(imageurl, omitImageurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      imageurl := trim(substring(imageurl, 1, 255));
+      imageurl := trim(substring(imageurl, 1, maxLengthImageurl));
 
       -- Check if empty string
       if imageurl = '' then
@@ -73,10 +79,10 @@ as $$
     -- Check if parameter is not null
     if feedurl is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      feedurl := regexp_replace(regexp_replace(feedurl, omitFeedurl, ' '), '[ ]{2,}', ' ');
+      feedurl := regexp_replace(regexp_replace(feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      feedurl := trim(substring(feedurl, 1, 768));
+      feedurl := trim(substring(feedurl, 1, maxLengthFeedurl));
 
       -- Check if empty string
       if feedurl = '' then
@@ -88,10 +94,10 @@ as $$
     -- Check if parameter is not null
     if actualurl is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      actualurl := regexp_replace(regexp_replace(actualurl, omitActualurl, ' '), '[ ]{2,}', ' ');
+      actualurl := regexp_replace(regexp_replace(actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      actualurl := trim(substring(actualurl, 1, 255));
+      actualurl := trim(substring(actualurl, 1, maxLengthActualurl));
 
       -- Check if empty string
       if actualurl = '' then
@@ -103,10 +109,10 @@ as $$
     -- Check if parameter is not null
     if publishDate is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      publishDate := regexp_replace(regexp_replace(publishDate, omitPublishDate, ' '), '[ ]{2,}', ' ');
+      publishDate := regexp_replace(regexp_replace(publishDate, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      publishDate := trim(substring(publishDate, 1, 255));
+      publishDate := trim(substring(publishDate, 1, maxLengthPublishDate));
 
       -- Check if the parameter cannot be casted into a date time
       if to_timestamp(publishDate, 'YYYY-MM-DD HH24:MI:SS') is null then
@@ -153,16 +159,13 @@ as $$
       (
         -- Select unique records
         select
-        trim(nft.title) as nfttitle,
-        trim(nft.imageurl) as nftimageurl,
-        trim(nft.feedurl) as nftfeedurl,
-        trim(nft.actualurl) as nftactualurl,
-        nft.publish_date as nftpublishdate,
-        nf.nfID as nfnfID
+        trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthTitle)) as title,
+        trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthImageurl)) as imageurl,
+        trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthFeedurl)) as feedurl,
+        trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthActualurl)) as actualurl,
+        trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthPublishDate)) as publish_date
         from NewsFeedTemp nft
-        left join NewsFeed nf on nf.title = nft.title
         where
-        nf.nfID is not null and
         (
           (
             trim(nft.title) <> '' and
@@ -179,30 +182,24 @@ as $$
           cast(nft.publish_date as timestamp) >= current_timestamp + interval '-1 hour' and
           cast(nft.publish_date as timestamp) <= current_timestamp + interval '0 hour'
         )
-        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date, nf.nfID
-      ),
-      filteredNewsDetails as
-      (
-        -- Select unique records
-        select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
-        max(snd.nftpublishdate) as publishdate
-        from subNewsDetails snd
-        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
+        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
       ),
       newsDetails as
       (
         -- Select unique records
         select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
-        substring(trim(regexp_replace(regexp_replace(snd.nftimageurl, omitImageurl, ' '), '[ ]{2,}', ' ')), 1, 255) as imageurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftfeedurl, omitFeedurl, ' '), '[ ]{2,}', ' ')), 1, 768) as feedurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftactualurl, omitActualurl, ' '), '[ ]{2,}', ' ')), 1, 255) as actualurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftpublishdate, omitPublishDate, ' '), '[ ]{2,}', ' ')), 1, 255) as publishdate,
-        snd.nfnfID as nfID
+        snd.title as title,
+        snd.imageurl as imageurl,
+        snd.feedurl as feedurl,
+        snd.actualurl as actualurl,
+        snd.publish_date as publish_date,
+        nf.nfID as nfID
         from subNewsDetails snd
-        join filteredNewsDetails fnd on fnd.title = snd.nfttitle and fnd.publishdate = snd.nftpublishdate
-        group by snd.nfttitle, snd.nftimageurl, snd.nftfeedurl, snd.nftactualurl, snd.nftpublishdate, snd.nfnfID
+        left join NewsFeed nf on nf.title = snd.title
+        inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        where
+        nf.nfID is not null
+        group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
       )
 
       -- Update records
@@ -225,7 +222,7 @@ as $$
         else
           nd.actualurl
       end,
-      publish_date = cast(nd.publishdate as timestamp),
+      publish_date = cast(nd.publish_date as timestamp),
       modified_date = cast(current_timestamp as timestamp)
       from newsDetails nd
       where
@@ -245,16 +242,13 @@ as $$
       (
         -- Select unique records
         select
-        trim(nft.title) as nfttitle,
-        trim(nft.imageurl) as nftimageurl,
-        trim(nft.feedurl) as nftfeedurl,
-        trim(nft.actualurl) as nftactualurl,
-        nft.publish_date as nftpublishdate,
-        nf.nfID as nfnfID
+        trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthTitle)) as title,
+        trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthImageurl)) as imageurl,
+        trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthFeedurl)) as feedurl,
+        trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthActualurl)) as actualurl,
+        trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthPublishDate)) as publish_date
         from NewsFeedTemp nft
-        left join NewsFeed nf on nf.title = nft.title
         where
-        nf.nfID is null and
         (
           (
             trim(nft.title) <> '' and
@@ -271,30 +265,24 @@ as $$
         --   cast(nft.publish_date as timestamp) >= current_timestamp + interval '-1 hour' and
         --   cast(nft.publish_date as timestamp) <= current_timestamp + interval '0 hour'
         -- )
-        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date, nf.nfID
-      ),
-      filteredNewsDetails as
-      (
-        -- Select unique records
-        select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
-        max(snd.nftpublishdate) as publishdate
-        from subNewsDetails snd
-        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
+        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
       ),
       newsDetails as
       (
         -- Select unique records
         select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as title,
-        substring(trim(regexp_replace(regexp_replace(snd.nftimageurl, omitImageurl, ' '), '[ ]{2,}', ' ')), 1, 255) as imageurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftfeedurl, omitFeedurl, ' '), '[ ]{2,}', ' ')), 1, 768) as feedurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftactualurl, omitActualurl, ' '), '[ ]{2,}', ' ')), 1, 255) as actualurl,
-        substring(trim(regexp_replace(regexp_replace(snd.nftpublishdate, omitPublishDate, ' '), '[ ]{2,}', ' ')), 1, 255) as publishdate,
-        snd.nfnfID as nfID
+        snd.title as title,
+        snd.imageurl as imageurl,
+        snd.feedurl as feedurl,
+        snd.actualurl as actualurl,
+        snd.publish_date as publish_date,
+        nf.nfID as nfID
         from subNewsDetails snd
-        join filteredNewsDetails fnd on fnd.title = snd.nfttitle and fnd.publishdate = snd.nftpublishdate
-        group by snd.nfttitle, snd.nftimageurl, snd.nftfeedurl, snd.nftactualurl, snd.nftpublishdate, snd.nfnfID
+        left join NewsFeed nf on nf.title = snd.title
+        inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        where
+        nf.nfID is null
+        group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
       )
 
       -- Select records
@@ -315,12 +303,11 @@ as $$
         else
           nd.actualurl
       end,
-      cast(nd.publishdate as timestamp),
+      cast(nd.publish_date as timestamp),
       cast(current_timestamp as timestamp),
       cast(current_timestamp as timestamp)
       from newsDetails nd
-      left join NewsFeed nf on nf.nfID = nd.nfID
-      group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publishdate;
+      group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publish_date;
 
       -- Select message
       select
