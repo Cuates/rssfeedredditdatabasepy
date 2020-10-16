@@ -4,7 +4,7 @@ use <databasename>;
 -- ================================================
 --        File: insertupdatedeleteBulkNewsFeed
 --     Created: 09/07/2020
---     Updated: 10/14/2020
+--     Updated: 10/16/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete Bulk News Feed
@@ -24,6 +24,12 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
     declare omitFeedurl varchar(255);
     declare omitActualurl varchar(255);
     declare omitPublishDate varchar(255);
+    declare maxLengthOptionMode int;
+    declare maxLengthTitle int;
+    declare maxLengthImageurl int;
+    declare maxLengthFeedurl int;
+    declare maxLengthActualurl int;
+    declare maxLengthPublishDate int;
 
     -- Set variable
     set omitOptionMode = '[^a-zA-Z]';
@@ -32,6 +38,12 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
     set omitFeedurl = '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
     set omitActualurl = '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
     set omitPublishDate = '[^0-9\-: ]';
+    set maxLengthOptionMode = 255;
+    set maxLengthTitle = 255;
+    set maxLengthImageurl = 255;
+    set maxLengthFeedurl = 768;
+    set maxLengthActualurl = 255;
+    set maxLengthPublishDate = 255;
 
     -- Check if parameter is not null
     if optionMode is not null then
@@ -39,7 +51,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set optionMode = regexp_replace(regexp_replace(optionMode, omitOptionMode, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set optionMode = trim(substring(optionMode, 1, 255));
+      set optionMode = trim(substring(optionMode, 1, maxLengthOptionMode));
 
       -- Check if empty string
       if optionMode = '' then
@@ -54,7 +66,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set title = regexp_replace(regexp_replace(title, omitTitle, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set title = trim(substring(title, 1, 255));
+      set title = trim(substring(title, 1, maxLengthTitle));
 
       -- Check if empty string
       if title = '' then
@@ -69,7 +81,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set imageurl = regexp_replace(regexp_replace(imageurl, omitImageurl, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set imageurl = trim(substring(imageurl, 1, 255));
+      set imageurl = trim(substring(imageurl, 1, maxLengthImageurl));
 
       -- Check if empty string
       if imageurl = '' then
@@ -84,7 +96,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set feedurl = regexp_replace(regexp_replace(feedurl, omitFeedurl, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set feedurl = trim(substring(feedurl, 1, 768));
+      set feedurl = trim(substring(feedurl, 1, maxLengthFeedurl));
 
       -- Check if empty string
       if feedurl = '' then
@@ -99,7 +111,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set actualurl = regexp_replace(regexp_replace(actualurl, omitActualurl, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set actualurl = trim(substring(actualurl, 1, 255));
+      set actualurl = trim(substring(actualurl, 1, maxLengthActualurl));
 
       -- Check if empty string
       if actualurl = '' then
@@ -114,7 +126,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       set publishDate = regexp_replace(regexp_replace(publishDate, omitPublishDate, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set publishDate = trim(substring(publishDate, 1, 255));
+      set publishDate = trim(substring(publishDate, 1, maxLengthPublishDate));
 
       -- Check if the parameter cannot be casted into a date time
       if str_to_date(publishDate, '%Y-%m-%d %H:%i:%S') is null then
@@ -175,16 +187,13 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       (
         -- Select unique records
         select
-        trim(nft.title) as `nfttitle`,
-        trim(nft.imageurl) as `nftimageurl`,
-        trim(nft.feedurl) as `nftfeedurl`,
-        trim(nft.actualurl) as `nftactualurl`,
-        nft.publish_date as `nftpublishdate`,
-        nf.nfID as `nfnfID`
+        trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' '), '[ ]{2,}', ' '), 1, maxLengthTitle)) as `title`,
+        trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' '), '[ ]{2,}', ' '), 1, maxLengthImageurl)) as `imageurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
         from NewsFeedTemp nft
-        left join NewsFeed nf on nf.title = nft.title
         where
-        nf.nfID is not null and
         (
           (
             trim(nft.title) <> '' and
@@ -201,30 +210,24 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
           cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
           cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
         )
-        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date, nf.nfID
-      ),
-      filteredNewsDetails as
-      (
-        -- Select unique records
-        select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as `title`,
-        max(snd.nftpublishdate) as `publishdate`
-        from subNewsDetails snd
-        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
+        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
       ),
       newsDetails as
       (
         -- Select unique records
         select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as `title`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftimageurl, omitImageurl, ' '), '[ ]{2,}', ' ')), 1, 255) as `imageurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftfeedurl, omitFeedurl, ' '), '[ ]{2,}', ' ')), 1, 768) as `feedurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftactualurl, omitActualurl, ' '), '[ ]{2,}', ' ')), 1, 255) as `actualurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftpublishdate, omitPublishDate, ' '), '[ ]{2,}', ' ')), 1, 255) as `publishdate`,
-        snd.nfnfID as `nfID`
+        snd.title as `title`,
+        snd.imageurl as `imageurl`,
+        snd.feedurl as `feedurl`,
+        snd.actualurl as `actualurl`,
+        snd.publish_date as `publish_date`,
+        nf.nfID as `nfID`
         from subNewsDetails snd
-        join filteredNewsDetails fnd on fnd.title = snd.nfttitle and fnd.publishdate = snd.nftpublishdate
-        group by snd.nfttitle, snd.nftimageurl, snd.nftfeedurl, snd.nftactualurl, snd.nftpublishdate, snd.nfnfID
+        left join NewsFeed nf on nf.title = snd.title
+				inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        where
+        nf.nfID is not null
+        group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
       )
 
       -- Select records
@@ -233,7 +236,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       nd.imageurl as `imageurl`,
       nd.feedurl as `feedurl`,
       nd.actualurl as `actualurl`,
-      nd.publishdate as `publishdate`,
+      nd.publish_date as `publish_date`,
       nd.nfID as `nfID`
       from newsDetails nd;
 
@@ -264,16 +267,13 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       (
         -- Select unique records
         select
-        trim(nft.title) as `nfttitle`,
-        trim(nft.imageurl) as `nftimageurl`,
-        trim(nft.feedurl) as `nftfeedurl`,
-        trim(nft.actualurl) as `nftactualurl`,
-        nft.publish_date as `nftpublishdate`,
-        nf.nfID as `nfnfID`
+        trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' '), '[ ]{2,}', ' '), 1, maxLengthTitle)) as `title`,
+        trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' '), '[ ]{2,}', ' '), 1, maxLengthImageurl)) as `imageurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
+        trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
         from NewsFeedTemp nft
-        left join NewsFeed nf on nf.title = nft.title
         where
-        nf.nfID is null and
         (
           (
             trim(nft.title) <> '' and
@@ -290,30 +290,24 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         --   cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
         --   cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
         -- )
-        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date, nf.nfID
-      ),
-      filteredNewsDetails as
-      (
-        -- Select unique records
-        select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as `title`,
-        max(snd.nftpublishdate) as `publishdate`
-        from subNewsDetails snd
-        group by substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255)
+        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
       ),
       newsDetails as
       (
         -- Select unique records
         select
-        substring(trim(regexp_replace(regexp_replace(snd.nfttitle, omitTitle, ' '), '[ ]{2,}', ' ')), 1, 255) as `title`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftimageurl, omitImageurl, ' '), '[ ]{2,}', ' ')), 1, 255) as `imageurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftfeedurl, omitFeedurl, ' '), '[ ]{2,}', ' ')), 1, 768) as `feedurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftactualurl, omitActualurl, ' '), '[ ]{2,}', ' ')), 1, 255) as `actualurl`,
-        substring(trim(regexp_replace(regexp_replace(snd.nftpublishdate, omitPublishDate, ' '), '[ ]{2,}', ' ')), 1, 255) as `publishdate`,
-        snd.nfnfID as `nfID`
+        snd.title as `title`,
+        snd.imageurl as `imageurl`,
+        snd.feedurl as `feedurl`,
+        snd.actualurl as `actualurl`,
+        snd.publish_date as `publish_date`,
+        nf.nfID as `nfID`
         from subNewsDetails snd
-        join filteredNewsDetails fnd on fnd.title = snd.nfttitle and fnd.publishdate = snd.nftpublishdate
-        group by snd.nfttitle, snd.nftimageurl, snd.nftfeedurl, snd.nftactualurl, snd.nftpublishdate, snd.nfnfID
+        left join NewsFeed nf on nf.title = snd.title
+				inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        where
+        nf.nfID is null
+        group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
       )
 
       -- Select records
@@ -322,12 +316,11 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       if(trim(nd.imageurl) = '', null, nd.imageurl),
       nd.feedurl,
       if(trim(nd.actualurl) = '', null, nd.actualurl),
-      cast(nd.publishdate as datetime(6)),
+      cast(nd.publish_date as datetime(6)),
       cast(current_timestamp(6) as datetime(6)),
       cast(current_timestamp(6) as datetime(6))
       from newsDetails nd
-      left join NewsFeed nf on nf.nfID = nd.nfID
-      group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publishdate;
+      group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publish_date;
 
       -- Select message
       select
