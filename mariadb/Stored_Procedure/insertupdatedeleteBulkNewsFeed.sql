@@ -224,7 +224,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         nf.nfID as `nfID`
         from subNewsDetails snd
         left join NewsFeed nf on nf.title = snd.title
-				inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is not null
         group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
@@ -304,7 +304,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         nf.nfID as `nfID`
         from subNewsDetails snd
         left join NewsFeed nf on nf.title = snd.title
-				inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+        inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is null
         group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
