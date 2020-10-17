@@ -4,7 +4,7 @@ use <databasename>;
 -- ================================================
 --        File: insertupdatedeleteBulkNewsFeed
 --     Created: 09/07/2020
---     Updated: 10/16/2020
+--     Updated: 10/17/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete Bulk News Feed
@@ -155,7 +155,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       -- Check if parameters are not null
       if title is not null and publishDate is not null then
         -- Insert record
-        insert into NewsFeedTemp(title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
+        insert into NewsFeedTemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
 
         -- Select message
         select
