@@ -2,16 +2,16 @@
 use <databasename>;
 
 -- ==================================
---        File: UQIX_NewsFeed_title
+--        File: uqix_newsfeed_title
 --     Created: 09/07/2020
---     Updated: 09/28/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Index news feed title
 -- ==================================
 
 -- Index Drop
-drop index if exists `UQIX_NewsFeed_title` on NewsFeed;
+drop index if exists `uqix_newsfeed_title` on newsfeed;
 
 -- Index Create
-create unique index `UQIX_NewsFeed_title` on NewsFeed (`title`);
+create unique index `uqix_newsfeed_title` on newsfeed (`title`);
