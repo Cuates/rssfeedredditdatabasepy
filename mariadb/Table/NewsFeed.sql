@@ -2,7 +2,7 @@
 use <databasename>;
 
 -- =======================
---        File: NewsFeed
+--        File: newsfeed
 --     Created: 09/07/2020
 --     Updated: 10/23/2020
 --  Programmer: Cuates
@@ -11,10 +11,10 @@ use <databasename>;
 -- =======================
 
 -- Table Drop
-drop table if exists NewsFeed;
+drop table if exists newsfeed;
 
 -- Table Create
-create table if not exists `NewsFeed`(
+create table if not exists `newsfeed`(
   `nfID` bigint(20) unsigned not null auto_increment,
   `title` varchar(255) collate utf8mb4_unicode_520_ci not null,
   `imageurl` varchar(255) collate utf8mb4_unicode_520_ci default null,
@@ -24,6 +24,6 @@ create table if not exists `NewsFeed`(
   `created_date` datetime not null default current_timestamp(),
   `modified_date` datetime default current_timestamp(),
   primary key (`nfID`),
-  unique key `uqix_NewsFeed_title` (`title`),
-  index `ix_NewsFeed_feedurl` (`feedurl`)
+  unique key `uqix_newsfeed_title` (`title`),
+  index `ix_newsfeed_feedurl` (`feedurl`)
 ) engine=InnoDB default charset=utf8mb4 collate utf8mb4_unicode_520_ci;
