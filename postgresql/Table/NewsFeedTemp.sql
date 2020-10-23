@@ -2,19 +2,19 @@
 \c <databasename>;
 
 -- ===========================
---        File: NewsFeedTemp
+--        File: newsfeedtemp
 --     Created: 09/07/2020
---     Updated: 10/05/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
---     Purpose: News Feed Temp
+--     Purpose: News feed temp
 -- ===========================
 
 -- Table Drop
-drop table if exists NewsFeedTemp;
+drop table if exists newsfeedtemp;
 
 -- Table Create
-create table if not exists NewsFeedTemp(
+create table if not exists newsfeedtemp(
   title citext default null,
   imageurl citext default null,
   feedurl citext default null,
