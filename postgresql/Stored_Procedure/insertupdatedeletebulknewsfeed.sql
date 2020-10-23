@@ -2,19 +2,19 @@
 \c <databasename>;
 
 -- ================================================
---        File: insertupdatedeleteBulkNewsFeed
+--        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 10/17/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
---     Purpose: Insert Update Delete Bulk News Feed
+--     Purpose: Insert update delete bulk news feed
 -- ================================================
 
 -- Procedure Drop
-drop procedure if exists insertupdatedeleteBulkNewsFeed;
+drop procedure if exists insertupdatedeletebulknewsfeed;
 
 -- Procedure Create Or Replace
-create or replace procedure insertupdatedeleteBulkNewsFeed(in optionMode text, in title text default null, in imageurl text default null, in feedurl text default null, in actualurl text default null, in publishDate text default null, inout status text default null)
+create or replace procedure insertupdatedeletebulknewsfeed(in optionMode text, in title text default null, in imageurl text default null, in feedurl text default null, in actualurl text default null, in publishDate text default null, inout status text default null)
 as $$
   -- Declare and set variables
   declare omitOptionMode varchar(255) := '[^a-zA-Z]';
@@ -130,7 +130,7 @@ as $$
     -- Check if option mode is delete temp news
     if optionMode = 'deleteTempNews' then
       -- Delete records
-      delete from NewsFeedTemp;
+      delete from newsfeedtemp;
 
       -- Select message
       select
@@ -141,7 +141,7 @@ as $$
       -- Check if parameters are not null
       if title is not null and publishDate is not null then
         -- Insert record
-        insert into NewsFeedTemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp);
+        insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp);
 
         -- Select message
         select
@@ -164,7 +164,7 @@ as $$
         cast(trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthFeedurl)) as citext) as feedurl,
         cast(trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthActualurl)) as citext) as actualurl,
         trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthPublishDate)) as publish_date
-        from NewsFeedTemp nft
+        from newsfeedtemp nft
         where
         (
           (
@@ -195,7 +195,7 @@ as $$
         snd.publish_date as publish_date,
         nf.nfID as nfID
         from subNewsDetails snd
-        left join NewsFeed nf on nf.title = snd.title
+        left join newsfeed nf on nf.title = snd.title
         inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is not null
@@ -203,7 +203,7 @@ as $$
       )
 
       -- Update records
-      update NewsFeed
+      update newsfeed
       set
       imageurl =
       case
@@ -226,7 +226,7 @@ as $$
       modified_date = cast(current_timestamp as timestamp)
       from newsDetails nd
       where
-      nd.nfID = NewsFeed.nfID;
+      nd.nfID = newsfeed.nfID;
 
       -- Select message
       select
@@ -247,7 +247,7 @@ as $$
         cast(trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthFeedurl)) as citext) as feedurl,
         cast(trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthActualurl)) as citext) as actualurl,
         trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g'), 1, maxLengthPublishDate)) as publish_date
-        from NewsFeedTemp nft
+        from newsfeedtemp nft
         where
         (
           (
@@ -278,7 +278,7 @@ as $$
         snd.publish_date as publish_date,
         nf.nfID as nfID
         from subNewsDetails snd
-        left join NewsFeed nf on nf.title = snd.title
+        left join newsfeed nf on nf.title = snd.title
         inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is null
