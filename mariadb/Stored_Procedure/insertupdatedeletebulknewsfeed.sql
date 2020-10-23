@@ -2,20 +2,20 @@
 use <databasename>;
 
 -- ================================================
---        File: insertupdatedeleteBulkNewsFeed
+--        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 10/17/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
---     Purpose: Insert Update Delete Bulk News Feed
+--     Purpose: Insert update delete bulk news feed
 -- ================================================
 
 -- Procedure Drop
-drop procedure if exists insertupdatedeleteBulkNewsFeed;
+drop procedure if exists insertupdatedeletebulknewsfeed;
 
 -- Procedure Create
 delimiter //
-create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
+create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
   begin
     -- Declare variable
     declare omitOptionMode varchar(255);
@@ -144,7 +144,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
     -- Check if option mode is delete temp news
     if optionMode = 'deleteTempNews' then
       -- Delete records
-      delete from NewsFeedTemp;
+      delete from newsfeedtemp;
 
       -- Select message
       select
@@ -155,7 +155,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       -- Check if parameters are not null
       if title is not null and publishDate is not null then
         -- Insert record
-        insert into NewsFeedTemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
+        insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
 
         -- Select message
         select
@@ -192,7 +192,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
         trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
         trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
-        from NewsFeedTemp nft
+        from newsfeedtemp nft
         where
         (
           (
@@ -223,7 +223,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         snd.publish_date as `publish_date`,
         nf.nfID as `nfID`
         from subNewsDetails snd
-        left join NewsFeed nf on nf.title = snd.title
+        left join newsfeed nf on nf.title = snd.title
         inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is not null
@@ -241,7 +241,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
       from newsDetails nd;
 
       -- Update records
-      update NewsFeed nf
+      update newsfeed nf
       inner join NewsFeedTempTable nftt on nftt.nfID = nf.nfID
       set
       nf.imageurl = if(trim(nftt.imageurl) = '', null, nftt.imageurl),
@@ -260,7 +260,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
     -- Else check if option mode is insert bulk news
     elseif optionMode = 'insertBulkNews' then
       -- Insert records
-      insert into NewsFeed (title, imageurl, feedurl, actualurl, publish_date, created_date, modified_date)
+      insert into newsfeed (title, imageurl, feedurl, actualurl, publish_date, created_date, modified_date)
 
       -- Remove duplicate records based on group by
       with subNewsDetails as
@@ -272,7 +272,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
         trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
         trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
-        from NewsFeedTemp nft
+        from newsfeedtemp nft
         where
         (
           (
@@ -303,7 +303,7 @@ create procedure `insertupdatedeleteBulkNewsFeed`(in optionMode text, in title t
         snd.publish_date as `publish_date`,
         nf.nfID as `nfID`
         from subNewsDetails snd
-        left join NewsFeed nf on nf.title = snd.title
+        left join newsfeed nf on nf.title = snd.title
         inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
         where
         nf.nfID is null
