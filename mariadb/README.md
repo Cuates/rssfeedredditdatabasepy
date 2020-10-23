@@ -34,7 +34,7 @@
 * N/A
 
 ### Stored Procedure Usage
-* `call insertupdatedeleteNewsFeed ('deleteTempNews', '', '', '', '', '');`
-* `call insertupdatedeleteNewsFeed ('insertTempNews', 'titleValue', 'imageUrlValue', 'feedUrlValue', 'actualUrlValue', '2020-10-13 00:00:00');`
-* `call insertupdatedeleteNewsFeed ('updateBulkNews', '', '', '', '', '');`
-* `call insertupdatedeleteNewsFeed ('insertBulkNews', '', '', '', '', '');`
+* `call insertupdatedeletebulknewsfeed ('deleteTempNews', '', '', '', '', '');`
+* `call insertupdatedeletebulknewsfeed ('insertTempNews', 'titleValue', 'imageUrlValue', 'feedUrlValue', 'actualUrlValue', '2020-10-13 00:00:00');`
+* `call insertupdatedeletebulknewsfeed ('updateBulkNews', '', '', '', '', '');`
+* `call insertupdatedeletebulknewsfeed ('insertBulkNews', '', '', '', '', '');`
