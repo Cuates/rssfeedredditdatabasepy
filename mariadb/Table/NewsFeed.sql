@@ -4,7 +4,7 @@ use <databasename>;
 -- =======================
 --        File: NewsFeed
 --     Created: 09/07/2020
---     Updated: 09/27/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: News Feed
@@ -24,6 +24,6 @@ create table if not exists `NewsFeed`(
   `created_date` datetime not null default current_timestamp(),
   `modified_date` datetime default current_timestamp(),
   primary key (`nfID`),
-  unique key `UQ_NewsFeed_title` (`title`),
-  index `IX_NewsFeed_feedurl` (`feedurl`)
+  unique key `uqix_NewsFeed_title` (`title`),
+  index `ix_NewsFeed_feedurl` (`feedurl`)
 ) engine=InnoDB default charset=utf8mb4 collate utf8mb4_unicode_520_ci;
