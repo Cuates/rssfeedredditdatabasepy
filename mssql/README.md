@@ -37,7 +37,7 @@
 * N/A
 
 ### Stored Procedure Usage
-* `exec dbo.insertupdatedeleteNewsFeed @optionMode = 'deleteTempNews'`
-* `exec dbo.insertupdatedeleteNewsFeed @optionMode = 'insertTempNews', @title = 'titleValue', @imageurl = 'imageUrlValue', @feedurl = 'feedUrlValue', @actualurl = 'actualUrlValue', @publishDate = '2020-10-13 00:00:00'`
-* `exec dbo.insertupdatedeleteNewsFeed @optionMode = 'updateBulkNews'`
-* `exec dbo.insertupdatedeleteNewsFeed @optionMode = 'insertBulkNews'`
+* `exec dbo.insertupdatedeleteBulkNewsFeed @optionMode = 'deleteTempNews'`
+* `exec dbo.insertupdatedeleteBulkNewsFeed @optionMode = 'insertTempNews', @title = 'titleValue', @imageurl = 'imageUrlValue', @feedurl = 'feedUrlValue', @actualurl = 'actualUrlValue', @publishDate = '2020-10-13 00:00:00'`
+* `exec dbo.insertupdatedeleteBulkNewsFeed @optionMode = 'updateBulkNews'`
+* `exec dbo.insertupdatedeleteBulkNewsFeed @optionMode = 'insertBulkNews'`
