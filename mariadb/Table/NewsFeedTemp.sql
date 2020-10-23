@@ -2,19 +2,19 @@
 use <databasename>;
 
 -- ===========================
---        File: NewsFeedTemp
+--        File: newsfeedtemp
 --     Created: 09/07/2020
---     Updated: 09/30/2020
+--     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
---     Purpose: News Feed Temp
+--     Purpose: News feed temp
 -- ===========================
 
 -- Table Drop
-drop table if exists NewsFeedTemp;
+drop table if exists newsfeedtemp;
 
 -- Table Create
-create table if not exists `NewsFeedTemp`(
+create table if not exists `newsfeedtemp`(
   `title` text collate utf8mb4_unicode_520_ci default null,
   `imageurl` text collate utf8mb4_unicode_520_ci default null,
   `feedurl` text collate utf8mb4_unicode_520_ci default null,
