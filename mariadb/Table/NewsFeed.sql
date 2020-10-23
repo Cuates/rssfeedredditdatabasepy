@@ -24,6 +24,5 @@ create table if not exists `newsfeed`(
   `created_date` datetime not null default current_timestamp(),
   `modified_date` datetime default current_timestamp(),
   primary key (`nfID`),
-  unique key `uqix_newsfeed_title` (`title`),
-  index `ix_newsfeed_feedurl` (`feedurl`)
+  unique key `uqix_newsfeed_title` (`title`)
 ) engine=InnoDB default charset=utf8mb4 collate utf8mb4_unicode_520_ci;
