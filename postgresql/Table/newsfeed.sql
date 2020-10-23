@@ -7,7 +7,7 @@
 --     Updated: 10/23/2020
 --  Programmer: Cuates
 --   Update By: Cuates
---     Purpose: News Feed
+--     Purpose: News feed
 -- =======================
 
 -- Table Drop
@@ -33,4 +33,4 @@ create table if not exists newsfeed(
 alter sequence newsfeed_nfID_seq owned by newsfeed.nfID;
 
 -- Grant permission to a sequence
-grant usage, select on sequence newsfeed_nfID_seq to <username>;
+grant usage, select on sequence newsfeed_nfID_seq to <userrolename>;
