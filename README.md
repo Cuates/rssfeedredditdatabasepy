@@ -47,3 +47,5 @@
 * SQLAlchemy
   * `pip3.9 install sqlalchemy`
     * [SQLAlchemy](https://pypi.org/project/SQLAlchemy/)
+* Install module in batch instead of Individual Installation
+  * `pip3.9 install -r /path/to/requirements.txt`
