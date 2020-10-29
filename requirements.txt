@@ -1,0 +1,8 @@
+pyodbc
+psycopg2-binary
+requests
+urllib3
+html3
+pytz
+tzlocal
+sqlalchemy
