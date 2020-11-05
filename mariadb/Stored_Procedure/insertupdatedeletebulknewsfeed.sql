@@ -4,7 +4,7 @@ use <databasename>;
 -- ================================================
 --        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 10/23/2020
+--     Updated: 11/05/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert update delete bulk news feed
@@ -15,7 +15,7 @@ drop procedure if exists insertupdatedeletebulknewsfeed;
 
 -- Procedure Create
 delimiter //
-create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
+create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishdate text)
   begin
     -- Declare variable
     declare omitOptionMode varchar(255);
@@ -121,23 +121,23 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     end if;
 
     -- Check if parameter is not null
-    if publishDate is not null then
+    if publishdate is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      set publishDate = regexp_replace(regexp_replace(publishDate, omitPublishDate, ' '), '[ ]{2,}', ' ');
+      set publishdate = regexp_replace(regexp_replace(publishdate, omitPublishDate, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set publishDate = trim(substring(publishDate, 1, maxLengthPublishDate));
+      set publishdate = trim(substring(publishdate, 1, maxLengthPublishDate));
 
       -- Check if the parameter cannot be casted into a date time
-      if str_to_date(publishDate, '%Y-%m-%d %H:%i:%S') is null then
+      if str_to_date(publishdate, '%Y-%m-%d %H:%i:%S') is null then
         -- Set the string as empty to be nulled below
-        set publishDate = '';
+        set publishdate = '';
       end if;
 
       -- Check if empty string
-      if publishDate = '' then
+      if publishdate = '' then
         -- Set parameter to null if empty string
-        set publishDate = nullif(publishDate, '');
+        set publishdate = nullif(publishdate, '');
       end if;
     end if;
 
@@ -153,9 +153,9 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     -- Check if option mode is insert temp news
     elseif optionMode = 'insertTempNews' then
       -- Check if parameters are not null
-      if title is not null and publishDate is not null then
+      if title is not null and publishdate is not null then
         -- Insert record
-        insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
+        insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishdate, current_timestamp(6));
 
         -- Select message
         select
