@@ -4,7 +4,7 @@ use <databasename>;
 -- ================================================
 --        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 11/05/2020
+--     Updated: 11/06/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert update delete bulk news feed
@@ -15,7 +15,7 @@ drop procedure if exists insertupdatedeletebulknewsfeed;
 
 -- Procedure Create
 delimiter //
-create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishdate text)
+create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title text, in imageurl text, in feedurl text, in actualurl text, in publishDate text)
   begin
     -- Declare variable
     declare omitOptionMode varchar(255);
@@ -30,6 +30,17 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     declare maxLengthFeedurl int;
     declare maxLengthActualurl int;
     declare maxLengthPublishDate int;
+    declare code varchar(5) default '00000';
+    declare msg text;
+    declare result text;
+    declare successcode varchar(5);
+
+    -- Declare exception handler for failed insert
+    declare CONTINUE HANDLER FOR SQLEXCEPTION
+      begin
+        GET DIAGNOSTICS CONDITION 1
+          code = RETURNED_SQLSTATE, msg = MESSAGE_TEXT;
+      end;
 
     -- Set variable
     set omitOptionMode = '[^a-zA-Z]';
@@ -44,6 +55,7 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     set maxLengthFeedurl = 768;
     set maxLengthActualurl = 255;
     set maxLengthPublishDate = 255;
+    set successcode = '00000';
 
     -- Check if parameter is not null
     if optionMode is not null then
@@ -121,50 +133,84 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     end if;
 
     -- Check if parameter is not null
-    if publishdate is not null then
+    if publishDate is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      set publishdate = regexp_replace(regexp_replace(publishdate, omitPublishDate, ' '), '[ ]{2,}', ' ');
+      set publishDate = regexp_replace(regexp_replace(publishDate, omitPublishDate, ' '), '[ ]{2,}', ' ');
 
       -- Set character limit
-      set publishdate = trim(substring(publishdate, 1, maxLengthPublishDate));
+      set publishDate = trim(substring(publishDate, 1, maxLengthPublishDate));
 
       -- Check if the parameter cannot be casted into a date time
-      if str_to_date(publishdate, '%Y-%m-%d %H:%i:%S') is null then
+      if str_to_date(publishDate, '%Y-%m-%d %H:%i:%S') is null then
         -- Set the string as empty to be nulled below
-        set publishdate = '';
+        set publishDate = '';
       end if;
 
       -- Check if empty string
-      if publishdate = '' then
+      if publishDate = '' then
         -- Set parameter to null if empty string
-        set publishdate = nullif(publishdate, '');
+        set publishDate = nullif(publishDate, '');
       end if;
     end if;
 
     -- Check if option mode is delete temp news
     if optionMode = 'deleteTempNews' then
-      -- Delete records
-      delete from newsfeedtemp;
+      -- Start the tranaction
+      start transaction;
+        -- Delete records
+        delete nf
+        from newsfeed nf;
+
+        -- Check whether the insert was successful
+        if code = successcode then
+          -- Commit transactional statement
+          commit;
+
+          -- Set message
+          set result = concat('{"Status": "Success", "Message": "Record(s) Delete"}');
+        else
+          -- Rollback to the previous state before the transaction was called
+          rollback;
+
+          -- Set message
+          set result = concat('{"Status": "Error", "Message": "', msg, '"}');
+        end if;
 
       -- Select message
       select
-      'Success~Record(s) deleted' as `status`;
+      result as `status`;
 
     -- Check if option mode is insert temp news
     elseif optionMode = 'insertTempNews' then
       -- Check if parameters are not null
-      if title is not null and publishdate is not null then
-        -- Insert record
-        insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishdate, current_timestamp(6));
+      if title is not null and publishDate is not null then
+        -- Start the tranaction
+        start transaction;
+          -- Insert record
+          insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
 
-        -- Select message
-        select
-        'Success~Record(s) inserted' as `status`;
+          -- Check whether the insert was successful
+          if code = successcode then
+            -- Commit transactional statement
+            commit;
+
+            -- Set message
+            set result = concat('{"Status": "Success", "Message": "Record(s) inserted"}');
+          else
+            -- Rollback to the previous state before the transaction was called
+            rollback;
+
+            -- Set message
+            set result = concat('{"Status": "Error", "Message": "', msg, '"}');
+          end if;
       else
-        -- Select message
-        select
-        'Error~Process halted, title and or publish date were not provided' as `status`;
+        -- Set message
+        set result = concat('{"Status": "Error", "Message": "Process halted, title and or publish date were not provided"}');
       end if;
+
+      -- Select message
+      select
+      result as `status`;
 
     -- Else check if option mode is update bulk news
     elseif optionMode = 'updateBulkNews' then
@@ -240,91 +286,125 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
       nd.nfID as `nfID`
       from newsDetails nd;
 
-      -- Update records
-      update newsfeed nf
-      inner join NewsFeedTempTable nftt on nftt.nfID = nf.nfID
-      set
-      nf.imageurl = if(trim(nftt.imageurl) = '', null, nftt.imageurl),
-      nf.feedurl = nftt.feedurl,
-      nf.actualurl = if(trim(nftt.actualurl) = '', null, nftt.actualurl),
-      nf.publish_date = cast(nftt.publish_date as datetime(6)),
-      nf.modified_date = cast(current_timestamp(6) as datetime(6));
+      -- Start the tranaction
+      start transaction;
+        -- Update records
+        update newsfeed nf
+        inner join NewsFeedTempTable nftt on nftt.nfID = nf.nfID
+        set
+        nf.imageurl = if(trim(nftt.imageurl) = '', null, nftt.imageurl),
+        nf.feedurl = nftt.feedurl,
+        nf.actualurl = if(trim(nftt.actualurl) = '', null, nftt.actualurl),
+        nf.publish_date = cast(nftt.publish_date as datetime(6)),
+        nf.modified_date = cast(current_timestamp(6) as datetime(6));
+
+        -- Check whether the insert was successful
+        if code = successcode then
+          -- Commit transactional statement
+          commit;
+
+          -- Set message
+          set result = concat('{"Status": "Success", "Message": "Record(s) updated"}');
+        else
+          -- Rollback to the previous state before the transaction was called
+          rollback;
+
+          -- Set message
+          set result = concat('{"Status": "Error", "Message": "', msg, '"}');
+        end if;
 
       -- Drop temporary table
       drop temporary table NewsFeedTempTable;
 
       -- Select message
       select
-      'Success~Record(s) updated' as `status`;
+      result as `status`;
 
     -- Else check if option mode is insert bulk news
     elseif optionMode = 'insertBulkNews' then
-      -- Insert records
-      insert into newsfeed (title, imageurl, feedurl, actualurl, publish_date, created_date, modified_date)
+      -- Start the tranaction
+      start transaction;
+        -- Insert records
+        insert into newsfeed (title, imageurl, feedurl, actualurl, publish_date, created_date, modified_date)
 
-      -- Remove duplicate records based on group by
-      with subNewsDetails as
-      (
-        -- Select unique records
-        select
-        trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' '), '[ ]{2,}', ' '), 1, maxLengthTitle)) as `title`,
-        trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' '), '[ ]{2,}', ' '), 1, maxLengthImageurl)) as `imageurl`,
-        trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
-        trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
-        trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
-        from newsfeedtemp nft
-        where
+        -- Remove duplicate records based on group by
+        with subNewsDetails as
         (
+          -- Select unique records
+          select
+          trim(substring(regexp_replace(regexp_replace(nft.title, omitTitle, ' '), '[ ]{2,}', ' '), 1, maxLengthTitle)) as `title`,
+          trim(substring(regexp_replace(regexp_replace(nft.imageurl, omitImageurl, ' '), '[ ]{2,}', ' '), 1, maxLengthImageurl)) as `imageurl`,
+          trim(substring(regexp_replace(regexp_replace(nft.feedurl, omitFeedurl, ' '), '[ ]{2,}', ' '), 1, maxLengthFeedurl)) as `feedurl`,
+          trim(substring(regexp_replace(regexp_replace(nft.actualurl, omitActualurl, ' '), '[ ]{2,}', ' '), 1, maxLengthActualurl)) as `actualurl`,
+          trim(substring(regexp_replace(regexp_replace(nft.publish_date, omitPublishDate, ' '), '[ ]{2,}', ' '), 1, maxLengthPublishDate)) as `publish_date`
+          from newsfeedtemp nft
+          where
           (
-            trim(nft.title) <> '' and
-            trim(nft.feedurl) <> '' and
-            trim(nft.publish_date) <> ''
-          ) or
-          (
-            nft.title is not null and
-            nft.feedurl is not null and
-            nft.publish_date is not null
-          )
-        ) -- and
-        -- (
-        --   cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
-        --   cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
-        -- )
-        group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
-      ),
-      newsDetails as
-      (
-        -- Select unique records
-        select
-        snd.title as `title`,
-        snd.imageurl as `imageurl`,
-        snd.feedurl as `feedurl`,
-        snd.actualurl as `actualurl`,
-        snd.publish_date as `publish_date`,
-        nf.nfID as `nfID`
-        from subNewsDetails snd
-        left join newsfeed nf on nf.title = snd.title
-        inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
-        where
-        nf.nfID is null
-        group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
-      )
+            (
+              trim(nft.title) <> '' and
+              trim(nft.feedurl) <> '' and
+              trim(nft.publish_date) <> ''
+            ) or
+            (
+              nft.title is not null and
+              nft.feedurl is not null and
+              nft.publish_date is not null
+            )
+          ) -- and
+          -- (
+          --   cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
+          --   cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
+          -- )
+          group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
+        ),
+        newsDetails as
+        (
+          -- Select unique records
+          select
+          snd.title as `title`,
+          snd.imageurl as `imageurl`,
+          snd.feedurl as `feedurl`,
+          snd.actualurl as `actualurl`,
+          snd.publish_date as `publish_date`,
+          nf.nfID as `nfID`
+          from subNewsDetails snd
+          left join newsfeed nf on nf.title = snd.title
+          inner join (select sndii.title, max(sndii.publish_date) as publish_date from subNewsDetails sndii group by sndii.title) as sndi on sndi.title = snd.title and sndi.publish_date = snd.publish_date
+          where
+          nf.nfID is null
+          group by snd.title, snd.imageurl, snd.feedurl, snd.actualurl, snd.publish_date, nf.nfID
+        )
 
-      -- Select records
-      select
-      nd.title,
-      if(trim(nd.imageurl) = '', null, nd.imageurl),
-      nd.feedurl,
-      if(trim(nd.actualurl) = '', null, nd.actualurl),
-      cast(nd.publish_date as datetime(6)),
-      cast(current_timestamp(6) as datetime(6)),
-      cast(current_timestamp(6) as datetime(6))
-      from newsDetails nd
-      group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publish_date;
+        -- Select records
+        select
+        nd.title,
+        if(trim(nd.imageurl) = '', null, nd.imageurl),
+        nd.feedurl,
+        if(trim(nd.actualurl) = '', null, nd.actualurl),
+        cast(nd.publish_date as datetime(6)),
+        cast(current_timestamp(6) as datetime(6)),
+        cast(current_timestamp(6) as datetime(6))
+        from newsDetails nd
+        group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publish_date;
+
+        -- Check whether the insert was successful
+        if code = successcode then
+          -- Commit transactional statement
+          commit;
+
+          -- Set message
+          set result = concat('{"Status": "Success", "Message": "Record(s) inserted"}');
+        else
+          -- Rollback to the previous state before the transaction was called
+          rollback;
+
+          -- Set message
+          set result = concat('{"Status": "Error", "Message": "', msg, '"}');
+        end if;
 
       -- Select message
       select
-      'Success~Record(s) inserted' as `status`;
+      result as `status`;
     end if;
   end
 // delimiter ;
