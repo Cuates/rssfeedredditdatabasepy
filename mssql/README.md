@@ -4,9 +4,6 @@
 ## Table of Contents
 * [Important Note](#important-note)
 * [Dependent MSSQL Function](#dependent-mssql-function)
-* [Prerequisite Data Types](#prerequisite-data-types)
-* [Prerequisite Functions](#prerequisite-functions)
-* [Prerequisite Conditions](#prerequisite-conditions)
 * [Stored Procedure Usage](#stored-procedure-usage)
 
 ### **Important Note**
@@ -14,27 +11,6 @@
 
 ### Dependent MSSQL Function
 * [Omit Characters](https://github.com/Cuates/omitcharactersmssql)
-
-### Prerequisite Data Types
-* bigint
-* nvarchar
-* datetime2
-
-### Prerequisite Functions
-* substring
-* nullif
-* try_cast
-* error_number
-* error_line
-* error_message
-* trim
-* cast
-* dateadd
-* max
-* iif
-
-### Prerequisite Conditions
-* N/A
 
 ### Stored Procedure Usage
 * `exec dbo.insertupdatedeleteBulkNewsFeed @optionMode = 'deleteTempNews'`
