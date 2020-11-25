@@ -4,7 +4,7 @@
 -- ================================================
 --        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 11/14/2020
+--     Updated: 11/25/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert Update Delete Bulk News Feed
@@ -22,13 +22,18 @@ as $$
   declare omitImageurl varchar(255) := '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
   declare omitFeedurl varchar(255) := '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
   declare omitActualurl varchar(255) := '[^a-zA-Z0-9 !"\#$%&''()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
-  declare omitPublishDate varchar(255) := '[^0-9\-: ]';
+  declare omitPublishDate varchar(255) := '[^0-9\-:./ ]';
   declare maxLengthOptionMode int := 255;
   declare maxLengthTitle int := 255;
   declare maxLengthImageurl int := 255;
   declare maxLengthFeedurl int := 768;
   declare maxLengthActualurl int := 255;
   declare maxLengthPublishDate int := 255;
+  declare titlestring text := title;
+  declare imageurlstring text := imageurl;
+  declare feedurlstring text := feedurl;
+  declare actualurlstring text := actualurl;
+  declare publishdatestring text := publishdate;
   declare code varchar(5) := '00000';
   declare msg text := '';
   declare result text := '';
@@ -50,83 +55,83 @@ as $$
     end if;
 
     -- Check if parameter is not null
-    if title is not null then
+    if titlestring is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      title := regexp_replace(regexp_replace(title, omitTitle, ' ', 'g'), '[ ]{2,}', ' ', 'g');
+      titlestring := regexp_replace(regexp_replace(titlestring, omitTitle, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      title := trim(substring(title, 1, maxLengthTitle));
+      titlestring := trim(substring(titlestring, 1, maxLengthTitle));
 
       -- Check if empty string
-      if title = '' then
+      if titlestring = '' then
         -- Set parameter to null if empty string
-        title := nullif(title, '');
+        titlestring := nullif(titlestring, '');
       end if;
     end if;
 
     -- Check if parameter is not null
-    if imageurl is not null then
+    if imageurlstring is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      imageurl := regexp_replace(regexp_replace(imageurl, omitImageurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
+      imageurlstring := regexp_replace(regexp_replace(imageurlstring, omitImageurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      imageurl := trim(substring(imageurl, 1, maxLengthImageurl));
+      imageurlstring := trim(substring(imageurlstring, 1, maxLengthImageurl));
 
       -- Check if empty string
-      if imageurl = '' then
+      if imageurlstring = '' then
         -- Set parameter to null if empty string
-        imageurl := nullif(imageurl, '');
+        imageurlstring := nullif(imageurlstring, '');
       end if;
     end if;
 
     -- Check if parameter is not null
-    if feedurl is not null then
+    if feedurlstring is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      feedurl := regexp_replace(regexp_replace(feedurl, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
+      feedurlstring := regexp_replace(regexp_replace(feedurlstring, omitFeedurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      feedurl := trim(substring(feedurl, 1, maxLengthFeedurl));
+      feedurlstring := trim(substring(feedurlstring, 1, maxLengthFeedurl));
 
       -- Check if empty string
-      if feedurl = '' then
+      if feedurlstring = '' then
         -- Set parameter to null if empty string
-        feedurl := nullif(feedurl, '');
+        feedurlstring := nullif(feedurlstring, '');
       end if;
     end if;
 
     -- Check if parameter is not null
-    if actualurl is not null then
+    if actualurlstring is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      actualurl := regexp_replace(regexp_replace(actualurl, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
+      actualurlstring := regexp_replace(regexp_replace(actualurlstring, omitActualurl, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      actualurl := trim(substring(actualurl, 1, maxLengthActualurl));
+      actualurlstring := trim(substring(actualurlstring, 1, maxLengthActualurl));
 
       -- Check if empty string
-      if actualurl = '' then
+      if actualurlstring = '' then
         -- Set parameter to null if empty string
-        actualurl := nullif(actualurl, '');
+        actualurlstring := nullif(actualurlstring, '');
       end if;
     end if;
 
     -- Check if parameter is not null
-    if publishDate is not null then
+    if publishdatestring is not null then
       -- Omit characters, multi space to single space, and trim leading and trailing spaces
-      publishDate := regexp_replace(regexp_replace(publishDate, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g');
+      publishdatestring := regexp_replace(regexp_replace(publishdatestring, omitPublishDate, ' ', 'g'), '[ ]{2,}', ' ', 'g');
 
       -- Set character limit
-      publishDate := trim(substring(publishDate, 1, maxLengthPublishDate));
+      publishdatestring := trim(substring(publishdatestring, 1, maxLengthPublishDate));
 
       -- Check if the parameter cannot be casted into a date time
-      if to_timestamp(publishDate, 'YYYY-MM-DD HH24:MI:SS') is null then
+      if to_timestamp(publishdatestring, 'YYYY-MM-DD HH24:MI:SS') is null then
         -- Set the string as empty to be nulled below
-        publishDate := '';
+        publishdatestring := '';
       end if;
 
       -- Check if empty string
-      if publishDate = '' then
+      if publishdatestring = '' then
         -- Set parameter to null if empty string
-        publishDate := nullif(publishDate, '');
+        publishdatestring := nullif(publishdatestring, '');
       end if;
     end if;
 
@@ -157,7 +162,7 @@ as $$
     -- Check if option mode is insert temp news
     elseif optionMode = 'insertTempNews' then
       -- Check if parameters are not null
-      if title is not null and publishDate is not null then
+      if titlestring is not null and publishdatestring is not null then
         -- Begin begin/except
         begin
           -- Insert record
@@ -172,12 +177,24 @@ as $$
           )
           values
           (
-            title,
-            imageurl,
-            feedurl,
-            actualurl,
-            publishDate,
-            current_timestamp
+            titlestring,
+            case
+              when imageurlstring is null or trim(imageurlstring) = ''
+                then
+                  null
+              else
+                imageurlstring
+            end,
+            feedurlstring,
+            case
+              when actualurlstring is null or trim(actualurlstring) = ''
+                then
+                  null
+              else
+                actualurlstring
+            end,
+            publishdatestring,
+            cast(current_timestamp as timestamp)
           );
 
           -- Set message
