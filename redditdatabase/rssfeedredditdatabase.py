@@ -1,11 +1,11 @@
 ##
 #        File: rssfeedredditdatabase.py
 #     Created: 09/13/2020
-#     Updated: 10/13/2020
+#     Updated: 11/25/2020
 #  Programmer: Cuates
 #  Updated By: Cuates
 #     Purpose: Retrieve RSS feed from Reddit news site
-#     Version: 0.0.8 Python3
+#     Version: 0.1.0 Python3
 ##
 
 # Import modules
@@ -26,25 +26,23 @@ def main():
     feedStorage = []
     feedStorageNested = {}
 
+    # Initialize list
+    mandatoryParams = ['title', 'url', 'created_utc']
+    possibleParams = ['title', 'imageurl', 'feedurl', 'actualurl', 'publishdate']
+    removeParams = []
+
     # Retrieve reddit new from web site
-    feedInfo = rfrdbclass.extractrssfeed('OptionInConfig')
-    # print(feedInfo)
+    feedInfo = rfrdbclass.extractrssfeed('RedditNews', mandatoryParams)
+    # print(f'feedInfo: {feedInfo}')
 
-    # Check if list is not empty
-    if feedInfo:
-      # Check if feed info is 200 OK
-      if feedInfo.status == 200:
-        # Read JSON data from URL and decode the string to utf-8
-        data = feedInfo.data
-        # data = feedInfo.data.decode('utf-8')
-
-        # Convert JSON string into dictionary list
-        jsonData = json.loads(data)
-
-        # Check if elements exists
-        if jsonData.get('data', {}).get('children') != None:
+    # Check if status exists
+    if feedInfo.get('Status') != None:
+      # Check if status is equal to success
+      if feedInfo.get('Status') == 'Success':
+        # Check if list is not empty
+        if feedInfo.get('Result'):
           # Process all feed information one at a time
-          for feedEntry in jsonData['data']['children']:
+          for feedEntry in feedInfo.get('Result'):
             # Initialize variable
             rssFeedTitle = ''
             rssFeedImageUrl = ''
@@ -55,21 +53,21 @@ def main():
             local_tz = ''
 
             # Check if element exists
-            if feedEntry.get('data', {}).get('title') != None:
+            if feedEntry.get('title') != None:
               # Store title
-              rssFeedTitle = feedEntry['data']['title']
+              rssFeedTitle = feedEntry.get('title')
 
               # Decode URL character(s)
               rssFeedTitle = html.unescape(rssFeedTitle)
 
             # Check if element exists
-            if feedEntry.get('data', {}).get('preview', {}).get('images') != None:
+            if feedEntry.get('preview', {}).get('images') != None:
               # Process all feed information one at a time
-              for feedEntryImage in feedEntry['data']['preview']['images']:
+              for feedEntryImage in feedEntry.get('preview').get('images'):
                 # Check if element exists
                 if feedEntryImage.get('source', {}).get('url') != None:
                   # Store image url
-                  rssFeedImageUrl = feedEntryImage['source']['url']
+                  rssFeedImageUrl = feedEntryImage.get('source').get('url')
 
                   # Decode URL character(s)
                   rssFeedImageUrl = html.unescape(rssFeedImageUrl)
@@ -78,9 +76,9 @@ def main():
                   # rssFeedImageUrl = urllib.parse.unquote(rssFeedImageUrl)
 
             # Check if element exists
-            if feedEntry.get('data', {}).get('url') != None:
+            if feedEntry.get('url') != None:
               # Store feed url
-              rssFeedUrl = feedEntry['data']['url']
+              rssFeedUrl = feedEntry.get('url')
 
               # Decode URL character(s)
               rssFeedUrl = html.unescape(rssFeedUrl)
@@ -89,9 +87,9 @@ def main():
               # rssFeedUrl = urllib.parse.unquote(rssFeedUrl)
 
             # Check if element exists
-            if feedEntry.get('data', {}).get('permalink') != None:
+            if feedEntry.get('permalink') != None:
               # Store perma url
-              rssFeedPermaUrl = feedEntry['data']['permalink']
+              rssFeedPermaUrl = feedEntry.get('permalink')
 
               # Decode URL character(s)
               rssFeedPermaUrl = html.unescape(rssFeedPermaUrl)
@@ -100,9 +98,9 @@ def main():
               rssFeedPermaUrl = urllib.parse.unquote(rssFeedPermaUrl)
 
             # Check if element exists
-            if feedEntry.get('data', {}).get('created_utc') != None:
+            if feedEntry.get('created_utc') != None:
               # Store publish date
-              rssFeedPublishDateUTCTimeStamp = feedEntry['data']['created_utc']
+              rssFeedPublishDateUTCTimeStamp = feedEntry.get('created_utc')
 
               # Set local time zone
               local_tz = tzlocal.get_localzone()
@@ -112,233 +110,100 @@ def main():
               rssFeedPublishDateLocalTimeStamp = datetime.datetime.fromtimestamp(float(rssFeedPublishDateUTCTimeStamp), local_tz).strftime("%Y-%m-%d %H:%M:%S")
 
             # Set dictionary list with values
-            feedStorage.append({'Param01': rssFeedTitle, 'Param02': rssFeedImageUrl, 'Param03': rssFeedUrl, 'Param04': rssFeedPermaUrl, 'Param05': rssFeedPublishDateLocalTimeStamp})
+            feedStorage.append({'title': rssFeedTitle, 'imageurl': rssFeedImageUrl, 'feedurl': rssFeedUrl, 'actualurl': rssFeedPermaUrl, 'publishdate': rssFeedPublishDateLocalTimeStamp})
 
-        # Check if there are any values to process
-        if feedStorage:
-          # MSSQL BEGIN
-          # Set header row for CSV file
-          newsHeaderColumn = ['Param01', 'Param02', 'Param03', 'Param04', 'Param05']
+          # print(f'feedStorage: {feedStorage}')
 
-          # Write data to a CSV file
-          writeCSVFileResp = rfrdbclass._writeToCSVFile('/path/to/share/drive/Outbound.csv', newsHeaderColumn, feedStorage)
-          # print (writeCSVFileResp)
+          # Check if there are any values to process
+          if feedStorage:
+            # MSSQL BEGIN
+            # Set header row for CSV file
+            newsHeaderColumn = ['title', 'imageurl', 'feedurl', 'actualurl', 'publishdate']
 
-          # Get current time stamp
-          dateTimeObj = datetime.datetime.now()
+            # Write data to a CSV file
+            writeCSVFileResp = rfrdbclass._writeToCSVFile('/mnt/share/linuxprivate/Reddit/DEV/News/News_Outbound.csv', newsHeaderColumn, feedStorage)
+            # print (writeCSVFileResp)
 
-          # Convert date time to string
-          timestampStr = dateTimeObj.strftime('%Y-%m-%d %H:%M:%S.%f')
+            # Get current time stamp
+            dateTimeObj = datetime.datetime.now()
 
-          # Restructure JSON output
-          feedStorageNested = {'news': {'created_date': timestampStr, 'count': len(feedStorage), 'children': feedStorage}}
+            # Convert date time to string
+            timestampStr = dateTimeObj.strftime('%Y-%m-%d %H:%M:%S.%f')
 
-          # Write data to a JSON file
-          writeJSONFileResp = rfrdbclass._writeToJSONFile('/path/to/share/drive/Outbound.json', feedStorageNested)
-          # print (writeJSONFileResp)
+            # Restructure JSON output
+            feedStorageNested = {'news': {'created_date': timestampStr, 'count': len(feedStorage), 'children': feedStorage}}
 
-          # Delete temp news only if there are records
-          deleteMSSQLWNews = rfrdbclass._deleteTempNews('OptionInConfig')
+            # Write data to a JSON file
+            writeJSONFileResp = rfrdbclass._writeToJSONFile('/mnt/share/linuxprivate/Reddit/DEV/News/News_Outbound.json', feedStorageNested)
+            # print (writeJSONFileResp)
+            # MSSQL END
 
-          # # Split at the tilde (~)
-          # splitDeleteMSSQLWNews = re.split(r'~', deleteMSSQLWNews)
+            # Initialize empty list/dictionary
+            feedStorageEmtpy = [{'title': '', 'imageurl': '', 'feedurl': '', 'actualurl': '', 'publishedate': ''}]
 
-          # # Check if SError is returned
-          # if splitDeleteMSSQLWNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error delete MSSQLWNews ' + splitDeleteMSSQLWNews[1])
-            # # print(str(feedInfo.status))
+            # Delete temp news only if there are records
+            deleteTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MariaDBSQLNews', 'deleting', 'insertupdatedeletebulknewsfeed', 'deleteTempNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # Delete temp news only if there are records
-          deleteMSSQLLNews = rfrdbclass._deleteTempNews('OptionInConfig')
+            # Delete temp news only if there are records
+            deleteTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('PGSQLNews', 'deleting', 'insertupdatedeletebulknewsfeed', 'deleteTempNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Split at the tilde (~)
-          # splitDeleteMSSQLLNews = re.split(r'~', deleteMSSQLLNews)
+            # Delete temp news only if there are records
+            deleteTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLLNews', 'deleting', 'dbo.insertupdatedeleteBulkNewsFeed', 'deleteTempNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Check if SError is returned
-          # if splitDeleteMSSQLLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error delete MSSQLLNews ' + splitDeleteMSSQLLNews[1])
-            # # print(str(feedInfo.status))
+            # Delete temp news only if there are records
+            deleteTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLWNews', 'deleting', 'dbo.insertupdatedeleteBulkNewsFeed', 'deleteTempNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # Insert news into temp table
-          insertMSSQLWNews = rfrdbclass._insertTempNews('OptionInConfig', feedStorage)
+            # print(f'deleteTempNewsFeed: {deleteTempNewsFeed}')
 
-          # # Split at the tilde (~)
-          # splitInsertMSSQLWNews = re.split(r'~', insertMSSQLWNews)
+            # Insert news into temp table
+            insertTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MariaDBSQLNews', 'inserting', 'insertupdatedeletebulknewsfeed', 'insertTempNews', possibleParams, feedStorage, removeParams)
 
-          # # Check if SError is returned
-          # if splitInsertMSSQLWNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert MSSQLWNews ' + splitInsertMSSQLWNews[1])
-            # # print(str(feedInfo.status))
+            # Insert news into temp table
+            insertTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('PGSQLNews', 'inserting', 'insertupdatedeletebulknewsfeed', 'insertTempNews', possibleParams, feedStorage, removeParams)
 
-          # Insert news into temp table
-          insertMSSQLLNews = rfrdbclass._insertTempNews('OptionInConfig', feedStorage)
+            # Insert news into temp table
+            insertTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLLNews', 'inserting', 'dbo.insertupdatedeleteBulkNewsFeed', 'insertTempNews', possibleParams, feedStorage, removeParams)
 
-          # # Split at the tilde (~)
-          # splitInsertMSSQLLNews = re.split(r'~', insertMSSQLLNews)
+            # Insert news into temp table
+            insertTempNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLWNews', 'inserting', 'dbo.insertupdatedeleteBulkNewsFeed', 'insertTempNews', possibleParams, feedStorage, removeParams)
 
-          # # Check if SError is returned
-          # if splitInsertMSSQLLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert MSSQLLNews ' + splitInsertMSSQLLNews[1])
-            # # print(str(feedInfo.status))
+            # print(f'insertTempNewsFeed: {insertTempNewsFeed}')
 
-          # Bulk update news
-          updateBulkMSSQLWNews = rfrdbclass._updateBulkNews('OptionInConfig')
+            # Bulk update news
+            updateBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MariaDBSQLNews', 'updating', 'insertupdatedeletebulknewsfeed', 'updateBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Split at the tilde (~)
-          # splitUpdateBulkMSSQLWNews = re.split(r'~', updateBulkMSSQLWNews)
+            # Bulk update news
+            updateBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('PGSQLNews', 'updating', 'insertupdatedeletebulknewsfeed', 'updateBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Check if SError is returned
-          # if splitUpdateBulkMSSQLWNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error update bulk MSSQLWNews ' + splitUpdateBulkMSSQLWNews[1])
-            # # print(str(feedInfo.status))
+            # Bulk update news
+            updateBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLLNews', 'updating', 'dbo.insertupdatedeleteBulkNewsFeed', 'updateBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # Bulk update news
-          updateBulkMSSQLLNews = rfrdbclass._updateBulkNews('OptionInConfig')
+            # Bulk update news
+            updateBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLWNews', 'updating', 'dbo.insertupdatedeleteBulkNewsFeed', 'updateBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Split at the tilde (~)
-          # splitUpdateBulkMSSQLLNews = re.split(r'~', updateBulkMSSQLLNews)
+            # print(f'updateBulkNewsFeed: {updateBulkNewsFeed}')
 
-          # # Check if SError is returned
-          # if splitUpdateBulkMSSQLLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error update bulk MSSQLLNews ' + splitUpdateBulkMSSQLLNews[1])
-            # # print(str(feedInfo.status))
+            # Bulk insert news
+            insertBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MariaDBSQLNews', 'inserting', 'insertupdatedeletebulknewsfeed', 'insertBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # Bulk insert news
-          insertBulkMSSQLWNews = rfrdbclass._insertBulkNews('OptionInConfig')
+            # Bulk insert news
+            insertBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('PGSQLNews', 'inserting', 'insertupdatedeletebulknewsfeed', 'insertBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Split at the tilde (~)
-          # splitInsertBulkMSSQLWNews = re.split(r'~', insertBulkMSSQLWNews)
+            # Bulk insert news
+            insertBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLLNews', 'inserting', 'dbo.insertupdatedeleteBulkNewsFeed', 'insertBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # # Check if SError is returned
-          # if splitInsertBulkMSSQLWNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert bulk MSSQLWNews ' + splitInsertBulkMSSQLWNews[1])
-            # # print(str(feedInfo.status))
+            # Bulk insert news
+            insertBulkNewsFeed = rfrdbclass._insertupdatedeleteNewsFeed('MSSQLWNews', 'inserting', 'dbo.insertupdatedeleteBulkNewsFeed', 'insertBulkNews', possibleParams, feedStorageEmtpy, removeParams)
 
-          # Bulk insert news
-          insertBulkMSSQLLNews = rfrdbclass._insertBulkNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitInsertBulkMSSQLLNews = re.split(r'~', insertBulkMSSQLLNews)
-
-          # # Check if SError is returned
-          # if splitInsertBulkMSSQLLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert bulk MSSQLLNews ' + splitInsertBulkMSSQLLNews[1])
-            # # print(str(feedInfo.status))
-          # MSSQL END
-          # MySQL BEGIN
-          # Delete temp news only if there are records
-          deleteMariaDBSQLNews = rfrdbclass._deleteTempNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitDeleteMariaDBSQLNews = re.split(r'~', deleteMariaDBSQLNews)
-
-          # # Check if SError is returned
-          # if splitDeleteMariaDBSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error delete MariaDBSQLNews ' + splitDeleteMariaDBSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Insert news into temp table
-          insertMariaDBSQLNews = rfrdbclass._insertTempNews('OptionInConfig', feedStorage)
-
-          # # Split at the tilde (~)
-          # splitInsertMariaDBSQLNews = re.split(r'~', insertMariaDBSQLNews)
-
-          # # Check if SError is returned
-          # if splitInsertMariaDBSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert MariaDBSQLNews ' + splitInsertMariaDBSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Bulk update news
-          updateBulkMariaDBSQLNews = rfrdbclass._updateBulkNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitUpdateBulkMariaDBSQLNews = re.split(r'~', updateBulkMariaDBSQLNews)
-
-          # # Check if SError is returned
-          # if splitUpdateBulkMariaDBSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error update bulk MariaDBSQLNews ' + splitUpdateBulkMariaDBSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Bulk insert news
-          insertBulkMariaDBSQLNews = rfrdbclass._insertBulkNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitInsertBulkMariaDBSQLNews = re.split(r'~', insertBulkMariaDBSQLNews)
-
-          # # Check if SError is returned
-          # if splitInsertBulkMariaDBSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert bulk MariaDBSQLNews ' + splitInsertBulkMariaDBSQLNews[1])
-            # # print(str(feedInfo.status))
-          # MySQL END
-          # PostgreSQL BEGIN
-          # Delete temp news only if there are records
-          deletePostgreSQLNews = rfrdbclass._deleteTempNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitDeletePostgreSQLNews = re.split(r'~', deletePostgreSQLNews)
-
-          # # Check if SError is returned
-          # if splitDeletePostgreSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error delete PGSQLNews ' + splitDeletePostgreSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Insert news into temp table
-          insertPostgreSQLNews = rfrdbclass._insertTempNews('OptionInConfig', feedStorage)
-
-          # # Split at the tilde (~)
-          # splitInsertPostgreSQLNews = re.split(r'~', insertPostgreSQLNews)
-
-          # # Check if SError is returned
-          # if splitInsertPostgreSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert PGSQLNews ' + splitInsertPostgreSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Bulk update news
-          updateBulkPostgreSQLNews = rfrdbclass._updateBulkNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitUpdateBulkPostgreSQLNews = re.split(r'~', updateBulkPostgreSQLNews)
-
-          # # Check if SError is returned
-          # if splitUpdateBulkPostgreSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error update bulk PGSQLNews ' + splitUpdateBulkPostgreSQLNews[1])
-            # # print(str(feedInfo.status))
-
-          # Bulk insert news
-          insertBulkPostgreSQLNews = rfrdbclass._insertBulkNews('OptionInConfig')
-
-          # # Split at the tilde (~)
-          # splitInsertBulkPostgreSQLNews = re.split(r'~', insertBulkPostgreSQLNews)
-
-          # # Check if SError is returned
-          # if splitInsertBulkPostgreSQLNews[0] == 'SError':
-            # # Log string
-            # rfrdbclass._setLogger('Error insert bulk PGSQLNews ' + splitInsertBulkPostgreSQLNews[1])
-            # # print(str(feedInfo.status))
-          # PostgreSQL END
-      else:
-        # Log string
-        rfrdbclass._setLogger('Error retrieving feed status ' + str(feedInfo.status))
-        # print(str(feedInfo.status))
+            # print(f'insertBulkNewsFeed: {insertBulkNewsFeed}')
+      # else:
+      #   print(f'''Status: {feedInfo.get('Status')}, Message: {feedInfo.get('Message')}, Result: []''')
     else:
+      # print(f'Status: Error, Message: {feedInfo}, Result: []')
+
       # Log string
-      rfrdbclass._setLogger('Error retrieving feed data ' + str(feedInfo))
-      # print(str(feedInfo))
+      rfrdbclass._setLogger('Error retrieveing news feed data ' + str(feedInfo))
+
   except Exception as e:
     # # Log string
     # logException = 'Issue with loop'
