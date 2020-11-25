@@ -1,10 +1,10 @@
 -- Database Connect
-use <databasename>;
+-- use <databasename>;
 
 -- ================================================
 --        File: insertupdatedeletebulknewsfeed
 --     Created: 09/07/2020
---     Updated: 11/06/2020
+--     Updated: 11/25/2020
 --  Programmer: Cuates
 --   Update By: Cuates
 --     Purpose: Insert update delete bulk news feed
@@ -48,7 +48,7 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
     set omitImageurl = '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
     set omitFeedurl = '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
     set omitActualurl = '[^a-zA-Z0-9 !"\#$%&\'()*+,\-./:;<=>?@\[\\\]^_‘{|}~¡¢£¥¦§¨©®¯°±´µ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿıŒœŠšŸŽžƒˆˇ˘˙˚˛ΓΘΣΦΩαδεπστφ–—‘’“”•…€™∂∆∏∑∙√∞∩∫≈≠≡≤≥]';
-    set omitPublishDate = '[^0-9\-: ]';
+    set omitPublishDate = '[^0-9\-:./ ]';
     set maxLengthOptionMode = 255;
     set maxLengthTitle = 255;
     set maxLengthImageurl = 255;
@@ -158,8 +158,8 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
       -- Start the tranaction
       start transaction;
         -- Delete records
-        delete nf
-        from newsfeed nf;
+        delete nft
+        from newsfeedtemp nft;
 
         -- Check whether the insert was successful
         if code = successcode then
@@ -187,7 +187,24 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
         -- Start the tranaction
         start transaction;
           -- Insert record
-          insert into newsfeedtemp (title, imageurl, feedurl, actualurl, publish_date, created_date) values (title, imageurl, feedurl, actualurl, publishDate, current_timestamp(6));
+          insert into newsfeedtemp
+          (
+            title,
+            imageurl,
+            feedurl,
+            actualurl,
+            publish_date,
+            created_date
+          )
+          values
+          (
+            title,
+            if(imageurl is null or trim(imageurl) = '', null, imageurl),
+            feedurl,
+            if(actualurl is null or trim(actualurl) = '', null, actualurl),
+            publishDate,
+            current_timestamp(6)
+          );
 
           -- Check whether the insert was successful
           if code = successcode then
@@ -253,8 +270,8 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
           )
         ) and
         (
-          cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
-          cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
+          cast(nft.publish_date as datetime) >= date_add(current_timestamp(6), interval -1 hour) and
+          cast(nft.publish_date as datetime) <= date_add(current_timestamp(6), interval 0 hour)
         )
         group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
       ),
@@ -295,8 +312,8 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
         nf.imageurl = if(trim(nftt.imageurl) = '', null, nftt.imageurl),
         nf.feedurl = nftt.feedurl,
         nf.actualurl = if(trim(nftt.actualurl) = '', null, nftt.actualurl),
-        nf.publish_date = cast(nftt.publish_date as datetime(6)),
-        nf.modified_date = cast(current_timestamp(6) as datetime(6));
+        nf.publish_date = cast(nftt.publish_date as datetime),
+        nf.modified_date = cast(current_timestamp(6) as datetime);
 
         -- Check whether the insert was successful
         if code = successcode then
@@ -352,8 +369,8 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
             )
           ) -- and
           -- (
-          --   cast(nft.publish_date as datetime(6)) >= date_add(current_timestamp(6), interval -1 hour) and
-          --   cast(nft.publish_date as datetime(6)) <= date_add(current_timestamp(6), interval 0 hour)
+          --   cast(nft.publish_date as datetime) >= date_add(current_timestamp(6), interval -1 hour) and
+          --   cast(nft.publish_date as datetime) <= date_add(current_timestamp(6), interval 0 hour)
           -- )
           group by nft.title, nft.imageurl, nft.feedurl, nft.actualurl, nft.publish_date
         ),
@@ -381,9 +398,9 @@ create procedure `insertupdatedeletebulknewsfeed`(in optionMode text, in title t
         if(trim(nd.imageurl) = '', null, nd.imageurl),
         nd.feedurl,
         if(trim(nd.actualurl) = '', null, nd.actualurl),
-        cast(nd.publish_date as datetime(6)),
-        cast(current_timestamp(6) as datetime(6)),
-        cast(current_timestamp(6) as datetime(6))
+        cast(nd.publish_date as datetime),
+        cast(current_timestamp(6) as datetime),
+        cast(current_timestamp(6) as datetime)
         from newsDetails nd
         group by nd.title, nd.imageurl, nd.feedurl, nd.actualurl, nd.publish_date;
 
